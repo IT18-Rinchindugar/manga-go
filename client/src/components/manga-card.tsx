@@ -11,7 +11,7 @@ interface MangaCardProps {
 export default function MangaCard({ manga }: MangaCardProps) {
   return (
     <Link href={`/manga/${manga.id}`}>
-      <motion.a 
+      <motion.div 
         className="group relative block cursor-pointer"
         whileHover={{ y: -5 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -50,7 +50,7 @@ export default function MangaCard({ manga }: MangaCardProps) {
             </div>
           </div>
         </div>
-      </motion.a>
+      </motion.div>
     </Link>
   );
 }

@@ -7,11 +7,15 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import MangaDetails from "@/pages/manga-details";
 import Reader from "@/pages/reader";
+import Browse from "@/pages/browse";
+import Profile from "@/pages/profile";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/browse" component={Browse} />
+      <Route path="/profile" component={Profile} />
       <Route path="/manga/:id" component={MangaDetails} />
       <Route path="/read/:mangaId/:chapterId" component={Reader} />
       <Route component={NotFound} />

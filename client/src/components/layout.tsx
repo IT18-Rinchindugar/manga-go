@@ -48,7 +48,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Link>
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
               <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>Home</a></Link>
-              <Link href="/popular"><a className="hover:text-primary transition-colors">Popular</a></Link>
+              <Link href="/browse"><a className={`hover:text-primary transition-colors ${location === '/browse' ? 'text-primary' : ''}`}>Browse</a></Link>
               <Link href="/latest"><a className="hover:text-primary transition-colors">Latest</a></Link>
               <Link href="/genres"><a className="hover:text-primary transition-colors">Genres</a></Link>
             </nav>
@@ -95,7 +95,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                    <Link href="/profile">
+                       <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
+                    </Link>
                     <DropdownMenuItem>Library</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setIsPaymentOpen(true)}>
                       <Coins className="mr-2 h-4 w-4" /> Top Up Coins
@@ -124,9 +126,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
                   <Link href="/"><a className="text-lg font-medium hover:text-primary">Home</a></Link>
-                  <Link href="/popular"><a className="text-lg font-medium hover:text-primary">Popular</a></Link>
+                  <Link href="/browse"><a className="text-lg font-medium hover:text-primary">Browse</a></Link>
                   <Link href="/latest"><a className="text-lg font-medium hover:text-primary">Latest</a></Link>
                   <Link href="/genres"><a className="text-lg font-medium hover:text-primary">Genres</a></Link>
+                  {!isLoggedIn && (
+                     <Button onClick={() => setIsAuthOpen(true)} className="mt-4 w-full">Sign In</Button>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>
