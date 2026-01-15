@@ -2,6 +2,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Coins, CreditCard } from "lucide-react";
 import { useState } from "react";
+import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -18,15 +21,21 @@ const COIN_PACKAGES = [
 
 export default function PaymentModal({ isOpen, onClose, onSuccess }: PaymentModalProps) {
   const [loading, setLoading] = useState<number | null>(null);
+  const { refetchUser } = useAuth();
 
-  const handlePurchase = (index: number, amount: number) => {
+  const handlePurchase = async (index: number, amount: number) => {
     setLoading(index);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(null);
+    try {
+      await api.purchaseCoins(amount);
+      await refetchUser();
+      toast.success(`Successfully purchased ${amount} coins!`);
       onSuccess(amount);
       onClose();
-    }, 1500);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to purchase coins');
+    } finally {
+      setLoading(null);
+    }
   };
 
   return (

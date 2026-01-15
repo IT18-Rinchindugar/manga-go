@@ -13,27 +13,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import AuthModal from "./auth-modal";
+import { useAuth } from "@/lib/auth-context";
 import PaymentModal from "./payment-modal";
+import { toast } from "sonner";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [location] = useLocation();
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [location, setLocation] = useLocation();
+  const { user, logout } = useAuth();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock state
-  const [coins, setCoins] = useState(150);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsAuthOpen(false);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+      setLocation('/');
+    } catch (error: any) {
+      toast.error(error.message || 'Logout failed');
+    }
   };
 
   const handleCoinPurchase = (amount: number) => {
-    setCoins(prev => prev + amount);
+    // Handled by PaymentModal
   };
 
   return (
@@ -66,53 +66,60 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-3">
-            {isLoggedIn ? (
+            {user ? (
               <>
                 <button 
                   onClick={() => setIsPaymentOpen(true)}
                   className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 transition-colors rounded-full text-primary font-medium text-sm border border-primary/20 cursor-pointer"
+                  data-testid="button-coins"
                 >
                   <Coins className="h-4 w-4 fill-primary" />
-                  <span>{coins}</span>
+                  <span data-testid="text-coins">{user.coins}</span>
                   <Plus className="h-3 w-3 ml-1" />
                 </button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-primary/20">
+                    <Button variant="ghost" className="relative h-9 w-9 rounded-full ring-2 ring-primary/20" data-testid="button-user-menu">
                       <Avatar className="h-9 w-9">
-                        <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-                        <AvatarFallback>JD</AvatarFallback>
+                        <AvatarImage src={user.avatar || undefined} alt={`@${user.username}`} />
+                        <AvatarFallback>{user.username.slice(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">John Doe</p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                          john@example.com
+                        <p className="text-sm font-medium leading-none" data-testid="text-username">{user.username}</p>
+                        <p className="text-xs leading-none text-muted-foreground" data-testid="text-email">
+                          {user.email}
                         </p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <Link href="/profile">
-                       <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
+                       <DropdownMenuItem className="cursor-pointer" data-testid="link-profile">Profile</DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem>Library</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsPaymentOpen(true)}>
+                    {user.role === 'ADMIN' && (
+                      <Link href="/admin">
+                        <DropdownMenuItem className="cursor-pointer" data-testid="link-admin">Admin Dashboard</DropdownMenuItem>
+                      </Link>
+                    )}
+                    <DropdownMenuItem onClick={() => setIsPaymentOpen(true)} data-testid="button-topup">
                       <Coins className="mr-2 h-4 w-4" /> Top Up Coins
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleLogout}>
+                    <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleLogout} data-testid="button-logout">
                       Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
             ) : (
-              <Button onClick={() => setIsAuthOpen(true)} size="sm" className="rounded-full px-6 font-medium">
-                Sign In
-              </Button>
+              <Link href="/auth">
+                <Button size="sm" className="rounded-full px-6 font-medium" data-testid="button-signin">
+                  Sign In
+                </Button>
+              </Link>
             )}
 
             {/* Mobile Menu */}
@@ -129,8 +136,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Link href="/browse"><a className="text-lg font-medium hover:text-primary">Browse</a></Link>
                   <Link href="/latest"><a className="text-lg font-medium hover:text-primary">Latest</a></Link>
                   <Link href="/genres"><a className="text-lg font-medium hover:text-primary">Genres</a></Link>
-                  {!isLoggedIn && (
-                     <Button onClick={() => setIsAuthOpen(true)} className="mt-4 w-full">Sign In</Button>
+                  {!user && (
+                    <Link href="/auth">
+                      <Button className="mt-4 w-full">Sign In</Button>
+                    </Link>
                   )}
                 </nav>
               </SheetContent>
@@ -156,7 +165,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
 
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onLogin={handleLogin} />
       <PaymentModal isOpen={isPaymentOpen} onClose={() => setIsPaymentOpen(false)} onSuccess={handleCoinPurchase} />
     </div>
   );
