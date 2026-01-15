@@ -9,6 +9,8 @@ import MangaDetails from "@/pages/manga-details";
 import Reader from "@/pages/reader";
 import Browse from "@/pages/browse";
 import Profile from "@/pages/profile";
+import AdminDashboard from "@/pages/admin/dashboard";
+import AdminMangaList from "@/pages/admin/manga-list";
 
 function Router() {
   return (
@@ -18,6 +20,11 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/manga/:id" component={MangaDetails} />
       <Route path="/read/:mangaId/:chapterId" component={Reader} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/manga" component={AdminMangaList} />
+      
       <Route component={NotFound} />
     </Switch>
   );
