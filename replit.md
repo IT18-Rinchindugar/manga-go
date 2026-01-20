@@ -1,7 +1,9 @@
 # InkFlow - Manga Reading Platform
 
 ## Overview
-InkFlow is a full-stack manga reading platform built with React, Express, and PostgreSQL. The platform features user authentication, a coin-based payment system for unlocking premium chapters, reading history tracking, and comprehensive administrative tools. The design follows a dark "Midnight Ink" theme with purple/violet accents.
+InkFlow is a manga reading platform prototype built with React. The frontend uses mock data for all API endpoints, making it a fully self-contained frontend application perfect for design iteration and prototyping. The platform features user authentication, a coin-based payment system for unlocking premium chapters, reading history tracking, and comprehensive administrative tools. The design follows a dark "Midnight Ink" theme with purple/violet accents.
+
+**Note**: This is a frontend-only prototype with mock API data. All authentication, manga data, and transactions are simulated in the browser.
 
 ## Recent Changes (January 15, 2026)
 - **Database Setup**: Deployed PostgreSQL schema with 7 tables (users, manga, chapters, transactions, reading_history, favorites, unlocked_chapters)
