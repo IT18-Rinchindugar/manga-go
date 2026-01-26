@@ -54,8 +54,29 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-primary/20 shadow-xl shadow-primary/5">
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/10 to-background" />
+      
+      {/* Floating orbs */}
+      <div className="absolute top-1/4 -left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-violet-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+      
+      {/* Grid pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(168, 85, 247, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.5) 1px, transparent 1px)`,
+          backgroundSize: '50px 50px'
+        }}
+      />
+      
+      {/* Decorative manga-style elements */}
+      <div className="absolute top-10 left-10 text-primary/10 text-9xl font-display select-none" style={{ fontFamily: 'Carter One' }}>漫</div>
+      <div className="absolute bottom-10 right-10 text-primary/10 text-9xl font-display select-none" style={{ fontFamily: 'Carter One' }}>画</div>
+      
+      <Card className="relative z-10 w-full max-w-md border-primary/20 shadow-2xl shadow-primary/10 backdrop-blur-sm bg-card/95">
         <CardHeader className="text-center">
           <h1 className="text-4xl font-display text-primary mb-2" style={{ fontFamily: 'Carter One, system-ui' }}>
             InkFlow
