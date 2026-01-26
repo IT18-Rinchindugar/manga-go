@@ -84,30 +84,28 @@ export default function Genres() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-10">
+          <div className="flex flex-wrap gap-2 mb-10">
             {allGenres.map((genre, index) => (
               <motion.button
                 key={genre}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.03 }}
                 onClick={() => setSelectedGenre(selectedGenre === genre ? null : genre)}
                 data-testid={`genre-button-${genre.toLowerCase().replace(/\s+/g, '-')}`}
                 className={`
-                  relative p-4 rounded-xl border-2 transition-all duration-300
+                  flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300
                   bg-gradient-to-br ${genreColors[genre] || 'from-primary/20 to-primary/10 border-primary/30 hover:border-primary/50'}
                   ${selectedGenre === genre ? 'ring-2 ring-primary scale-105' : 'hover:scale-105'}
                 `}
               >
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`p-2 rounded-lg ${selectedGenre === genre ? 'bg-primary text-primary-foreground' : 'bg-background/50'}`}>
-                    {genreIcons[genre] || <Tags className="h-5 w-5" />}
-                  </div>
-                  <span className="font-semibold text-sm">{genre}</span>
-                  <Badge variant="secondary" className="text-xs">
-                    {genreCounts[genre]} titles
-                  </Badge>
-                </div>
+                <span className={`${selectedGenre === genre ? 'text-primary' : ''}`}>
+                  {genreIcons[genre] || <Tags className="h-4 w-4" />}
+                </span>
+                <span className="font-medium text-sm">{genre}</span>
+                <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                  {genreCounts[genre]}
+                </Badge>
               </motion.button>
             ))}
           </div>
