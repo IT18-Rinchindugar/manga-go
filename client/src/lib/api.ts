@@ -1,4 +1,4 @@
-import type { User, Manga, Chapter, Transaction, ReadingHistory } from "@shared/schema";
+import type { User, Manga, Chapter, Transaction, ReadingHistory } from "./types";
 
 interface AuthResponse {
   user: Omit<User, 'password'>;

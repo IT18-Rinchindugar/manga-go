@@ -1,21 +1,23 @@
 # InkFlow - Manga Reading Platform
 
 ## Overview
-InkFlow is a manga reading platform prototype built with React. The frontend uses mock data for all API endpoints, making it a fully self-contained frontend application perfect for design iteration and prototyping. The platform features user authentication, a coin-based payment system for unlocking premium chapters, reading history tracking, and comprehensive administrative tools. The design follows a dark "Midnight Ink" theme with purple/violet accents.
+InkFlow is a manga reading platform prototype built with React and Vite. The frontend uses mock data for all API endpoints, making it a fully self-contained frontend application perfect for design iteration and prototyping. The platform features user authentication, a coin-based payment system for unlocking premium chapters, reading history tracking, and comprehensive administrative tools. The design follows a dark "Midnight Ink" theme with purple/violet accents.
 
 **Note**: This is a frontend-only prototype with mock API data. All authentication, manga data, and transactions are simulated in the browser.
 
-## Recent Changes (January 20, 2026)
-- Converted to frontend-only prototype with mock API data
-- Removed unused backend files (auth.ts, db.ts, storage.ts, seed.ts)
-- Simplified server to only serve the frontend
-- Mock API supports per-user session state
+## Recent Changes (January 26, 2026)
+- Converted to pure Vite client-only app structure
+- Removed backend dependencies (express, passport, drizzle, pg, etc.)
+- Created local TypeScript types in client/src/lib/types.ts
+- Minimal server/index.ts that starts Vite dev server directly
+- Added scroll-to-top behavior on route navigation
+- Multi-select genre filtering on Genres page
 
 ## Project Architecture
 
 ### Tech Stack
-- **Frontend**: React 19, Wouter (routing), Radix UI, Tailwind CSS
-- **Backend**: Express.js (serves frontend only)
+- **Frontend**: React 19, Vite, Wouter (routing), Radix UI, Tailwind CSS
+- **Build**: Vite dev server with HMR
 - **Styling**: Custom dark theme with "Midnight Ink" aesthetic (hsl 265 89% 66% primary color)
 - **Fonts**: Carter One (display), Outfit (body)
 
@@ -33,12 +35,23 @@ InkFlow is a manga reading platform prototype built with React. The frontend use
 - **User Profile**: Reading history, favorites, transaction history, coin balance
 
 ### File Structure
-- `client/src/lib/api.ts` - Mock API client with all simulated endpoints
-- `client/src/lib/auth-context.tsx` - React authentication context
-- `client/src/pages/auth.tsx` - Login/register page
-- `client/src/components/layout.tsx` - Main app layout with header/footer
-- `server/index.ts` - Simple Express server (serves frontend only)
-- `server/routes.ts` - Empty routes (all API handled by mock data)
+```
+client/
+├── src/
+│   ├── lib/
+│   │   ├── api.ts          - Mock API client with all simulated endpoints
+│   │   ├── auth-context.tsx - React authentication context
+│   │   ├── types.ts        - TypeScript type definitions
+│   │   ├── mock-data.ts    - Mock manga/user data
+│   │   └── queryClient.ts  - React Query client
+│   ├── pages/              - Page components
+│   ├── components/         - Reusable UI components
+│   └── App.tsx            - Main app with routing
+├── index.html             - Entry HTML file
+└── index.css              - Global styles
+server/
+└── index.ts               - Minimal Vite dev server starter
+```
 
 ## User Preferences
 - Design: Dark mode only with "Midnight Ink" theme
@@ -47,7 +60,7 @@ InkFlow is a manga reading platform prototype built with React. The frontend use
 ## Development
 
 ### Setup
-1. Run `npm run dev` to start development server on port 5000
+1. Run `npm run dev` to start Vite development server on port 5000
 
 ### Test Credentials
 - **Admin**: username: `admin`, password: `admin123`

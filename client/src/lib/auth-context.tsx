@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { api } from './api';
-import type { User } from '@shared/schema';
+import type { User } from './types';
 
 interface AuthContextType {
   user: Omit<User, 'password'> | null;
