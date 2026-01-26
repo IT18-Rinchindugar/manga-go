@@ -53,7 +53,7 @@ const genreColors: Record<string, string> = {
 };
 
 export default function Genres() {
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const allGenres = Array.from(new Set(MOCK_MANGA.flatMap(m => m.genre))).sort();
 
@@ -62,8 +62,14 @@ export default function Genres() {
     return acc;
   }, {} as Record<string, number>);
 
-  const filteredManga = selectedGenre 
-    ? MOCK_MANGA.filter(m => m.genre.includes(selectedGenre))
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres(prev => 
+      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
+    );
+  };
+
+  const filteredManga = selectedGenres.length > 0
+    ? MOCK_MANGA.filter(m => selectedGenres.every(g => m.genre.includes(g)))
     : [];
 
   return (
@@ -85,55 +91,60 @@ export default function Genres() {
           </div>
 
           <div className="flex flex-wrap gap-2 mb-10">
-            {allGenres.map((genre, index) => (
-              <motion.button
-                key={genre}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.03 }}
-                onClick={() => setSelectedGenre(selectedGenre === genre ? null : genre)}
-                data-testid={`genre-button-${genre.toLowerCase().replace(/\s+/g, '-')}`}
-                className={`
-                  flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300
-                  bg-gradient-to-br ${genreColors[genre] || 'from-primary/20 to-primary/10 border-primary/30 hover:border-primary/50'}
-                  ${selectedGenre === genre ? 'ring-2 ring-primary scale-105' : 'hover:scale-105'}
-                `}
-              >
-                <span className={`${selectedGenre === genre ? 'text-primary' : ''}`}>
-                  {genreIcons[genre] || <Tags className="h-4 w-4" />}
-                </span>
-                <span className="font-medium text-sm">{genre}</span>
-                <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                  {genreCounts[genre]}
-                </Badge>
-              </motion.button>
-            ))}
+            {allGenres.map((genre, index) => {
+              const isSelected = selectedGenres.includes(genre);
+              return (
+                <motion.button
+                  key={genre}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.03 }}
+                  onClick={() => toggleGenre(genre)}
+                  data-testid={`genre-button-${genre.toLowerCase().replace(/\s+/g, '-')}`}
+                  className={`
+                    flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300
+                    bg-gradient-to-br ${genreColors[genre] || 'from-primary/20 to-primary/10 border-primary/30 hover:border-primary/50'}
+                    ${isSelected ? 'ring-2 ring-primary scale-105' : 'hover:scale-105'}
+                  `}
+                >
+                  <span className={`${isSelected ? 'text-primary' : ''}`}>
+                    {genreIcons[genre] || <Tags className="h-4 w-4" />}
+                  </span>
+                  <span className="font-medium text-sm">{genre}</span>
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                    {genreCounts[genre]}
+                  </Badge>
+                </motion.button>
+              );
+            })}
           </div>
 
           <AnimatePresence mode="wait">
-            {selectedGenre && (
+            {selectedGenres.length > 0 && (
               <motion.section
-                key={selectedGenre}
+                key={selectedGenres.join(',')}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
                 <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-primary`}>
-                      {genreIcons[selectedGenre] || <Tags className="h-5 w-5" />}
-                    </div>
-                    <h2 className="text-2xl font-bold">{selectedGenre}</h2>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h2 className="text-2xl font-bold">Showing:</h2>
+                    {selectedGenres.map(genre => (
+                      <Badge key={genre} variant="default" className="text-sm">
+                        {genre}
+                      </Badge>
+                    ))}
                     <Badge variant="outline">{filteredManga.length} titles</Badge>
                   </div>
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => setSelectedGenre(null)}
+                    onClick={() => setSelectedGenres([])}
                     data-testid="clear-genre-button"
                   >
-                    Clear filter
+                    Clear all
                   </Button>
                 </div>
 
@@ -153,7 +164,7 @@ export default function Genres() {
             )}
           </AnimatePresence>
 
-          {!selectedGenre && (
+          {selectedGenres.length === 0 && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
