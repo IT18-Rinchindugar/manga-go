@@ -9,6 +9,8 @@ import Home from "@/pages/home";
 import MangaDetails from "@/pages/manga-details";
 import Reader from "@/pages/reader";
 import Browse from "@/pages/browse";
+import Latest from "@/pages/latest";
+import Genres from "@/pages/genres";
 import Profile from "@/pages/profile";
 import Auth from "@/pages/auth";
 import AdminDashboard from "@/pages/admin/dashboard";
@@ -19,6 +21,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/browse" component={Browse} />
+      <Route path="/latest" component={Latest} />
+      <Route path="/genres" component={Genres} />
       <Route path="/auth" component={Auth} />
       <Route path="/profile" component={Profile} />
       <Route path="/manga/:id" component={MangaDetails} />
