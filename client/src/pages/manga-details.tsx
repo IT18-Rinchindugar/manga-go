@@ -1,5 +1,6 @@
 import { useRoute, Link } from "wouter";
-import { MOCK_MANGA, MOCK_CHAPTERS } from "@/lib/mock-data";
+import { MOCK_MANGA } from "@/lib/mock-data";
+import { api } from "@/lib/api";
 import Layout from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,12 +8,19 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Play, Star, Clock, BookOpen, Lock, Coins, Heart, Share2, Calendar, User, Palette } from "lucide-react";
 import NotFound from "@/pages/not-found";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function MangaDetails() {
   const [match, params] = useRoute("/manga/:id");
   const manga = MOCK_MANGA.find(m => m.id === params?.id);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const { data: chapters = [] } = useQuery({
+    queryKey: ['chapters', params?.id],
+    queryFn: () => api.getChaptersByMangaId(params?.id || ''),
+    enabled: !!params?.id
+  });
 
   if (!manga) return <NotFound />;
 
@@ -33,7 +41,7 @@ export default function MangaDetails() {
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <Button size="lg" className="w-full text-lg font-bold shadow-lg shadow-primary/20" asChild>
-                <Link href={`/read/${manga.id}/c1`}>
+                <Link href={chapters.length > 0 ? `/read/${manga.id}/${chapters[0].id}` : '#'}>
                   <Play className="mr-2 h-5 w-5 fill-current" /> Read First Chapter
                 </Link>
               </Button>
@@ -121,20 +129,20 @@ export default function MangaDetails() {
               </div>
               <ScrollArea className="h-[500px]">
                 <div className="divide-y divide-white/5">
-                  {MOCK_CHAPTERS.map((chapter) => (
+                  {chapters.map((chapter) => (
                     <Link 
                       key={chapter.id} 
-                      href={chapter.isLocked ? "#" : `/read/${manga.id}/${chapter.id}`}
-                      className={`flex items-center justify-between p-4 hover:bg-white/5 transition-colors group ${chapter.isLocked ? 'opacity-70' : ''}`}
+                      href={!chapter.isFree ? "#" : `/read/${manga.id}/${chapter.id}`}
+                      className={`flex items-center justify-between p-4 hover:bg-white/5 transition-colors group ${!chapter.isFree ? 'opacity-70' : ''}`}
                     >
                         <div className="flex flex-col gap-1">
                           <span className="font-semibold group-hover:text-primary transition-colors text-base">
-                            {chapter.title}
+                            Chapter {chapter.number}: {chapter.title}
                           </span>
-                          <span className="text-xs text-muted-foreground">20 pages • {chapter.releaseDate}</span>
+                          <span className="text-xs text-muted-foreground">{chapter.pageUrls.length} pages</span>
                         </div>
                         
-                        {chapter.isLocked ? (
+                        {!chapter.isFree ? (
                           <div className="flex items-center gap-3">
                             <span className="text-xs font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-1 rounded">
                               <Coins className="h-3 w-3" /> {chapter.price}

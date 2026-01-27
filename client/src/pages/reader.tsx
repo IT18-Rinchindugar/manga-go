@@ -1,15 +1,17 @@
 import { useRoute, Link } from "wouter";
-import { MOCK_MANGA, MOCK_CHAPTERS } from "@/lib/mock-data";
+import { MOCK_MANGA } from "@/lib/mock-data";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
-import { ChevronLeft, ChevronRight, Menu, Settings, MessageSquare, List, Maximize, Minimize, Type } from "lucide-react";
+import { ChevronLeft, ChevronRight, Menu, Settings, MessageSquare, List, Maximize, Minimize, Type, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import NotFound from "@/pages/not-found";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Reader() {
   const [match, params] = useRoute("/read/:mangaId/:chapterId");
@@ -19,15 +21,28 @@ export default function Reader() {
   const [zoom, setZoom] = useState(100);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  const { data: chapters = [], isLoading } = useQuery({
+    queryKey: ['chapters', params?.mangaId],
+    queryFn: () => api.getChaptersByMangaId(params?.mangaId || ''),
+    enabled: !!params?.mangaId
+  });
+
   if (!params) return <NotFound />;
 
   const manga = MOCK_MANGA.find(m => m.id === params.mangaId);
-  const chapter = MOCK_CHAPTERS.find(c => c.id === params.chapterId);
+  const chapter = chapters.find(c => c.id === params.chapterId);
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#111] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
   
   if (!manga || !chapter) return <NotFound />;
 
-  // Mock total pages since we only have one image repeated
-  const totalPages = 20;
+  const totalPages = chapter.pageUrls.length;
 
   // Toggle controls on click
   const toggleControls = () => setShowControls(!showControls);
@@ -83,7 +98,7 @@ export default function Reader() {
               <h3 className="font-bold mb-4">Chapters</h3>
               <ScrollArea className="h-[calc(100vh-100px)]">
                 <div className="space-y-1">
-                   {MOCK_CHAPTERS.map(c => (
+                   {chapters.map(c => (
                      <Button 
                        key={c.id}
                        variant={c.id === chapter.id ? "secondary" : "ghost"} 
@@ -91,7 +106,7 @@ export default function Reader() {
                        asChild
                      >
                        <Link href={`/read/${manga.id}/${c.id}`}>
-                         Chapter {c.number}
+                         Chapter {c.number}: {c.title}
                        </Link>
                      </Button>
                    ))}
@@ -151,11 +166,11 @@ export default function Reader() {
           style={{ width: readingMode === 'single' ? 'auto' : `${zoom > 100 ? '100' : (zoom/100) * 60}%`, maxWidth: '100%' }}
         >
            {readingMode === 'vertical' ? (
-             // Vertical Mode
-             Array.from({length: 3}).map((_, i) => (
+             // Vertical Mode - show all pages
+             chapter.pageUrls.map((pageUrl, i) => (
                <img 
                 key={i}
-                src={chapter.pages[0]} 
+                src={pageUrl} 
                 alt={`Page ${i+1}`}
                 className="w-full h-auto shadow-2xl"
                 style={{ width: `${zoom}%` }}
@@ -165,7 +180,7 @@ export default function Reader() {
            ) : (
              // Single Page Mode
              <img 
-              src={chapter.pages[0]} 
+              src={chapter.pageUrls[currentPage - 1]} 
               alt={`Page ${currentPage}`}
               className="max-h-[80vh] w-auto shadow-2xl object-contain"
               style={{ transform: `scale(${zoom/100})` }}
