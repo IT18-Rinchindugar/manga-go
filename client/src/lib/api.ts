@@ -28,9 +28,9 @@ const mockUsers: Map<string, Omit<User, 'password'> & { password: string }> = ne
   }]
 ]);
 
-const SOLO_LEVELING_PAGES = Array.from({ length: 72 }, (_, i) => 
-  `/manga/solo-leveling/chapter-1/page-${String(i + 1).padStart(2, '0')}.jpg`
-);
+const SOLO_LEVELING_PAGES = Array.from({ length: 311 }, (_, i) => 
+  `/manga/solo-leveling/chapter-1/page-${String(i + 1)}.jpg`
+).slice(7, 311);
 
 const mockManga: Manga[] = [
   {
