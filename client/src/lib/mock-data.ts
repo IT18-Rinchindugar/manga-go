@@ -4,6 +4,10 @@ import fantasyCover from '@assets/generated_images/fantasy_manga_cover.png';
 import romanceCover from '@assets/generated_images/romance_manga_cover.png';
 import mangaPage from '@assets/generated_images/manga_page_interior.png';
 
+const SOLO_LEVELING_PAGES = Array.from({ length: 72 }, (_, i) => 
+  `/manga/solo-leveling/chapter-1/page-${String(i + 1).padStart(2, '0')}.jpg`
+);
+
 export interface Manga {
   id: string;
   title: string;
@@ -45,6 +49,25 @@ export interface UserProfile {
 }
 
 export const MOCK_MANGA: Manga[] = [
+  {
+    id: 'solo-leveling',
+    title: 'Solo Leveling',
+    altTitle: '나 혼자만 레벨업',
+    cover: '/manga/solo-leveling/cover.jpg',
+    rating: 4.9,
+    reviews: 15420,
+    genre: ['Action', 'Fantasy', 'Adventure', 'Supernatural'],
+    status: 'Completed',
+    author: 'Chugong',
+    artist: 'DUBU (REDICE Studio)',
+    releaseYear: 2018,
+    synopsis: 'In a world where hunters — humans who possess magical abilities — must battle deadly monsters to protect mankind from total annihilation, a notoriously weak hunter named Sung Jinwoo finds himself in a seemingly endless struggle for survival. One day, after narrowly surviving an overwhelmingly powerful double dungeon that nearly wipes out his entire party, a mysterious program called the System chooses him as its sole player and gives him the extremely rare ability to level up in strength, breaking all previously known limits.',
+    chapters: 1,
+    pricePerChapter: 50,
+    isPopular: true,
+    isNew: true,
+    lastUpdated: '2024-01-20'
+  },
   {
     id: '1',
     title: 'Neon Ronin: Cyber City',

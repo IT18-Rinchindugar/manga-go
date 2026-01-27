@@ -28,7 +28,27 @@ const mockUsers: Map<string, Omit<User, 'password'> & { password: string }> = ne
   }]
 ]);
 
+const SOLO_LEVELING_PAGES = Array.from({ length: 72 }, (_, i) => 
+  `/manga/solo-leveling/chapter-1/page-${String(i + 1).padStart(2, '0')}.jpg`
+);
+
 const mockManga: Manga[] = [
+  {
+    id: 'solo-leveling',
+    title: 'Solo Leveling',
+    altTitle: '나 혼자만 레벨업',
+    author: 'Chugong',
+    artist: 'DUBU (REDICE Studio)',
+    coverUrl: '/manga/solo-leveling/cover.jpg',
+    synopsis: 'In a world where hunters — humans who possess magical abilities — must battle deadly monsters to protect mankind from total annihilation, a notoriously weak hunter named Sung Jinwoo finds himself in a seemingly endless struggle for survival. One day, after narrowly surviving an overwhelmingly powerful double dungeon that nearly wipes out his entire party, a mysterious program called the System chooses him as its sole player and gives him the extremely rare ability to level up in strength, breaking all previously known limits.',
+    genres: ['Action', 'Fantasy', 'Adventure', 'Supernatural'],
+    status: 'Completed',
+    releaseYear: 2018,
+    rating: '4.9',
+    reviews: 15420,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
   {
     id: '1',
     title: 'Shadow Chronicles',
@@ -129,6 +149,7 @@ const mockManga: Manga[] = [
 
 // Pre-generated static chapters for consistency
 const chapterTitlesByManga: Record<string, string[]> = {
+  'solo-leveling': ['The Weakest Hunter'],
   '1': ['The Awakening', 'First Shadow', 'Dark Powers', 'Night Training', 'Shadow Warriors', 'Ancient Evil', 'Battle in Darkness', 'The Prophecy'],
   '2': ['New Beginnings', 'First Day', 'Hidden Powers', 'The Test', 'Secret Society', 'Forbidden Magic'],
   '3': ['Digital Blade', 'Neon Streets', 'Corporate Wars', 'Code Samurai', 'System Override'],
@@ -147,17 +168,20 @@ const getChaptersForManga = (mangaId: string): Chapter[] => {
   
   const titles = chapterTitlesByManga[mangaId] || ['Chapter 1', 'Chapter 2', 'Chapter 3', 'Chapter 4', 'Chapter 5'];
   
-  const chapters: Chapter[] = titles.map((title, i) => ({
-    id: `${mangaId}-ch-${i + 1}`,
-    mangaId,
-    number: i + 1,
-    title,
-    pageUrls: Array.from({ length: 15 }, (_, j) => `https://picsum.photos/seed/page${mangaId}${i}${j}/800/1200`),
-    price: i < 3 ? 0 : 50,
-    isFree: i < 3,
-    releaseDate: new Date(2024, 0, (i + 1) * 7),
-    createdAt: new Date()
-  }));
+  const chapters: Chapter[] = titles.map((title, i) => {
+    const isSoloLeveling = mangaId === 'solo-leveling';
+    return {
+      id: `${mangaId}-ch-${i + 1}`,
+      mangaId,
+      number: i + 1,
+      title,
+      pageUrls: isSoloLeveling ? SOLO_LEVELING_PAGES : Array.from({ length: 15 }, (_, j) => `https://picsum.photos/seed/page${mangaId}${i}${j}/800/1200`),
+      price: i < 3 ? 0 : 50,
+      isFree: i < 3,
+      releaseDate: new Date(2024, 0, (i + 1) * 7),
+      createdAt: new Date()
+    };
+  });
   
   chaptersCache.set(mangaId, chapters);
   return chapters;
