@@ -27,6 +27,14 @@ export default function Reader() {
     enabled: !!params?.mangaId
   });
 
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (showControls) {
+      timeout = setTimeout(() => setShowControls(false), 3000);
+    }
+    return () => clearTimeout(timeout);
+  }, [showControls]);
+
   if (!params) return <NotFound />;
 
   const manga = MOCK_MANGA.find(m => m.id === params.mangaId);
@@ -44,16 +52,7 @@ export default function Reader() {
 
   const totalPages = chapter.pageUrls.length;
 
-  // Toggle controls on click
   const toggleControls = () => setShowControls(!showControls);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (showControls) {
-      timeout = setTimeout(() => setShowControls(false), 3000);
-    }
-    return () => clearTimeout(timeout);
-  }, [showControls]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -162,7 +161,7 @@ export default function Reader() {
         onClick={toggleControls}
       >
         <div 
-          className={`transition-all duration-200 ${readingMode === 'single' ? 'flex items-center justify-center h-full' : 'space-y-2'}`}
+          className={`transition-all duration-200 ${readingMode === 'single' ? 'flex items-center justify-center h-full' : ''}`}
           style={{ width: readingMode === 'single' ? 'auto' : `${zoom > 100 ? '100' : (zoom/100) * 60}%`, maxWidth: '100%' }}
         >
            {readingMode === 'vertical' ? (
@@ -172,7 +171,7 @@ export default function Reader() {
                 key={i}
                 src={pageUrl} 
                 alt={`Page ${i+1}`}
-                className="w-full h-auto shadow-2xl"
+                className="w-full h-auto block"
                 style={{ width: `${zoom}%` }}
                 loading="lazy"
                />
