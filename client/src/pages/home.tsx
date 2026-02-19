@@ -4,12 +4,13 @@ import MangaCard from "@/components/manga-card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Flame, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
   const featuredManga = MOCK_MANGA[0];
   const popularManga = MOCK_MANGA.filter(m => m.isPopular);
   const newManga = MOCK_MANGA.filter(m => m.isNew);
-
+  const { t } = useTranslation();
   return (
     <Layout>
       {/* Hero Section */}
@@ -60,20 +61,18 @@ export default function Home() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
             <Flame className="h-6 w-6 text-orange-500 fill-orange-500" />
-            <h2 className="text-2xl md:text-3xl font-bold font-display">Popular This Week</h2>
+            <h2 className="text-2xl md:text-3xl font-bold font-display">
+              {t('manga.popularThisWeek')}
+            </h2>
           </div>
           <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
-            View All <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
           {popularManga.map((manga) => (
             <MangaCard key={manga.id} manga={manga} />
-          ))}
-          {/* Duplicate to fill grid for mockup */}
-          {popularManga.map((manga) => (
-            <MangaCard key={`dup-${manga.id}`} manga={manga} />
           ))}
         </div>
       </section>
@@ -84,20 +83,18 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-primary fill-primary" />
-              <h2 className="text-2xl md:text-3xl font-bold font-display">New Releases</h2>
+              <h2 className="text-2xl md:text-3xl font-bold font-display">
+                {t('manga.newReleases')}
+              </h2>
             </div>
             <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
-              View All <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
             {newManga.map((manga) => (
               <MangaCard key={manga.id} manga={manga} />
-            ))}
-             {/* Duplicate to fill grid for mockup */}
-            {MOCK_MANGA.slice(0, 3).map((manga) => (
-              <MangaCard key={`new-dup-${manga.id}`} manga={{...manga, isNew: true}} />
             ))}
           </div>
         </div>

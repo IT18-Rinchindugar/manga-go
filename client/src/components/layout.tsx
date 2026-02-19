@@ -14,21 +14,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
+import LanguageSwitcher from "@/components/language-switcher";
 import PaymentModal from "./payment-modal";
 import { toast } from "sonner";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success('Logged out successfully');
+      toast.success(t('notifications.logoutSuccess'));
       setLocation('/');
     } catch (error: any) {
-      toast.error(error.message || 'Logout failed');
+      toast.error(error.message || t('notifications.logoutFailed'));
     }
   };
 
@@ -43,14 +46,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-6">
             <Link href="/">
               <a className="font-display text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
-                InkFlow
+                {t('appName')}
               </a>
             </Link>
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-              <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>Home</a></Link>
-              <Link href="/browse"><a className={`hover:text-primary transition-colors ${location === '/browse' ? 'text-primary' : ''}`}>Browse</a></Link>
-              <Link href="/latest"><a className="hover:text-primary transition-colors">Latest</a></Link>
-              <Link href="/genres"><a className="hover:text-primary transition-colors">Genres</a></Link>
+              <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>{t('common.home')}</a></Link>
+              <Link href="/browse"><a className={`hover:text-primary transition-colors ${location === '/browse' ? 'text-primary' : ''}`}>{t('common.browse')}</a></Link>
+              <Link href="/genres"><a className="hover:text-primary transition-colors">{t('common.genres')}</a></Link>
             </nav>
           </div>
 
@@ -59,13 +61,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search manga..."
+                placeholder={t('common.search')}
                 className="w-full bg-secondary/50 border-transparent focus-visible:ring-primary pl-9 rounded-full"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             {user ? (
               <>
                 <button 
@@ -97,19 +100,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <Link href="/profile">
-                       <DropdownMenuItem className="cursor-pointer" data-testid="link-profile">Profile</DropdownMenuItem>
+                       <DropdownMenuItem className="cursor-pointer" data-testid="link-profile">{t('common.profile')}</DropdownMenuItem>
                     </Link>
                     {user.role === 'ADMIN' && (
                       <Link href="/admin">
-                        <DropdownMenuItem className="cursor-pointer" data-testid="link-admin">Admin Dashboard</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" data-testid="link-admin">{t('admin.adminDashboard')}</DropdownMenuItem>
                       </Link>
                     )}
                     <DropdownMenuItem onClick={() => setIsPaymentOpen(true)} data-testid="button-topup">
-                      <Coins className="mr-2 h-4 w-4" /> Top Up Coins
+                      <Coins className="mr-2 h-4 w-4" /> {t('navigation.topUpCoins')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleLogout} data-testid="button-logout">
-                      Log out
+                      {t('common.logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -117,7 +120,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             ) : (
               <Link href="/auth">
                 <Button size="sm" className="rounded-full px-6 font-medium" data-testid="button-signin">
-                  Sign In
+                  {t('common.signIn')}
                 </Button>
               </Link>
             )}
@@ -132,13 +135,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/"><a className="text-lg font-medium hover:text-primary">Home</a></Link>
-                  <Link href="/browse"><a className="text-lg font-medium hover:text-primary">Browse</a></Link>
-                  <Link href="/latest"><a className="text-lg font-medium hover:text-primary">Latest</a></Link>
-                  <Link href="/genres"><a className="text-lg font-medium hover:text-primary">Genres</a></Link>
+                  <Link href="/"><a className="text-lg font-medium hover:text-primary">{t('common.home')}</a></Link>
+                  <Link href="/browse"><a className="text-lg font-medium hover:text-primary">{t('common.browse')}</a></Link>
+                  <Link href="/latest"><a className="text-lg font-medium hover:text-primary">{t('common.latest')}</a></Link>
+                  <Link href="/genres"><a className="text-lg font-medium hover:text-primary">{t('common.genres')}</a></Link>
                   {!user && (
                     <Link href="/auth">
-                      <Button className="mt-4 w-full">Sign In</Button>
+                      <Button className="mt-4 w-full">{t('common.signIn')}</Button>
                     </Link>
                   )}
                 </nav>
@@ -155,12 +158,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <footer className="border-t py-8 mt-12 bg-card/50">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 InkFlow. All rights reserved.
+            {t('footer.copyright')}
           </p>
           <div className="flex gap-4 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors">Terms</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-            <a href="#" className="hover:text-primary transition-colors">Contact</a>
+            <a href="#" className="hover:text-primary transition-colors">{t('ui.terms')}</a>
+            <a href="#" className="hover:text-primary transition-colors">{t('ui.privacy')}</a>
+            <a href="#" className="hover:text-primary transition-colors">{t('ui.contact')}</a>
           </div>
         </div>
       </footer>

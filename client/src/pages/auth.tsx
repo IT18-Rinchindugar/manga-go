@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useLanguage } from '@/lib/language-context';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 
 export default function Auth() {
   const { login, register } = useAuth();
+  const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,10 +25,10 @@ export default function Auth() {
 
     try {
       await login(loginData.username, loginData.password);
-      toast.success('Logged in successfully!');
+      toast.success(t('notifications.loginSuccess'));
       setLocation('/');
     } catch (error: any) {
-      toast.error(error.message || 'Login failed');
+      toast.error(error.message || t('notifications.loginFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -36,7 +38,7 @@ export default function Auth() {
     e.preventDefault();
     
     if (registerData.password !== registerData.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(t('auth.passwordMismatch'));
       return;
     }
 
@@ -44,10 +46,10 @@ export default function Auth() {
 
     try {
       await register(registerData.username, registerData.email, registerData.password);
-      toast.success('Account created successfully!');
+      toast.success(t('notifications.accountCreated'));
       setLocation('/');
     } catch (error: any) {
-      toast.error(error.message || 'Registration failed');
+      toast.error(error.message || t('notifications.registrationFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -79,21 +81,21 @@ export default function Auth() {
       <Card className="relative z-10 w-full max-w-md border-primary/20 shadow-2xl shadow-primary/10 backdrop-blur-sm bg-card/95">
         <CardHeader className="text-center">
           <h1 className="text-4xl font-display text-primary mb-2" style={{ fontFamily: 'Carter One, system-ui' }}>
-            InkFlow
+            {t('appName')}
           </h1>
-          <CardDescription>Welcome to your manga reading platform</CardDescription>
+          <CardDescription>{t('auth.welcomeMessage')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login" data-testid="tab-login">Login</TabsTrigger>
-              <TabsTrigger value="register" data-testid="tab-register">Register</TabsTrigger>
+              <TabsTrigger value="login" data-testid="tab-login">{t('common.login')}</TabsTrigger>
+              <TabsTrigger value="register" data-testid="tab-register">{t('common.register')}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-username">Username</Label>
+                  <Label htmlFor="login-username">{t('user.username')}</Label>
                   <Input
                     id="login-username"
                     data-testid="input-login-username"
@@ -104,7 +106,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password">{t('user.password')}</Label>
                   <Input
                     id="login-password"
                     data-testid="input-login-password"
@@ -123,10 +125,10 @@ export default function Auth() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logging in...
+                      {t('common.loggingIn')}
                     </>
                   ) : (
-                    'Login'
+                    t('common.login')
                   )}
                 </Button>
               </form>
@@ -135,7 +137,7 @@ export default function Auth() {
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="register-username">Username</Label>
+                  <Label htmlFor="register-username">{t('user.username')}</Label>
                   <Input
                     id="register-username"
                     data-testid="input-register-username"
@@ -146,7 +148,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-email">Email</Label>
+                  <Label htmlFor="register-email">{t('user.email')}</Label>
                   <Input
                     id="register-email"
                     data-testid="input-register-email"
@@ -157,7 +159,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-password">Password</Label>
+                  <Label htmlFor="register-password">{t('user.password')}</Label>
                   <Input
                     id="register-password"
                     data-testid="input-register-password"
@@ -168,7 +170,7 @@ export default function Auth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-confirm-password">Confirm Password</Label>
+                  <Label htmlFor="register-confirm-password">{t('user.confirmPassword')}</Label>
                   <Input
                     id="register-confirm-password"
                     data-testid="input-register-confirm-password"
@@ -187,10 +189,10 @@ export default function Auth() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                      {t('common.creatingAccount')}
                     </>
                   ) : (
-                    'Create Account'
+                    t('auth.createAccount')
                   )}
                 </Button>
               </form>
@@ -198,9 +200,9 @@ export default function Auth() {
           </Tabs>
           
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Demo credentials:</p>
-            <p>User: demo / user123</p>
-            <p>Admin: admin / admin123</p>
+            <p>{t('user.demoCredentials')}:</p>
+            <p>{t('auth.demoUser')}</p>
+            <p>{t('auth.demoAdmin')}</p>
           </div>
         </CardContent>
       </Card>
