@@ -1,34 +1,56 @@
 import { useRoute, Link } from "wouter";
-import { MOCK_MANGA } from "@/lib/mock-data";
+import { mangaApi } from "@/lib/manga-api";
 import { api } from "@/lib/api";
 import Layout from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Play, Star, Clock, BookOpen, Lock, Coins, Heart, Share2, Calendar, User, Palette } from "lucide-react";
+import { Play, Star, Clock, BookOpen, Lock, Coins, Heart, Share2, Calendar, User, Palette, Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function MangaDetails() {
   const [match, params] = useRoute("/manga/:id");
-  const manga = MOCK_MANGA.find(m => m.id === params?.id);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { data: chapters = [] } = useQuery({
-    queryKey: ['chapters', params?.id],
-    queryFn: () => api.getChaptersByMangaId(params?.id || ''),
+  // Fetch manga details from PocketBase
+  const { data: manga, isLoading: mangaLoading, error: mangaError } = useQuery({
+    queryKey: ['manga', params?.id],
+    queryFn: () => api.getMangaById(params?.id || ''),
     enabled: !!params?.id
   });
 
-  if (!manga) return <NotFound />;
+  // Fetch chapters
+  const { data: chapters = [] } = useQuery({
+    queryKey: ['chapters', params?.id],
+    queryFn: () => mangaApi.getChaptersByMangaId(params?.id || ''),
+    enabled: !!params?.id
+  });
+
+  // Loading state
+  if (mangaLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Error or not found
+  if (mangaError || !manga) return <NotFound />;
+
+  // Get cover URL for PBManga
+  const coverUrl = `${import.meta.env.VITE_POCKETBASE_URL}/api/files/${manga.collectionId}/${manga.id}/${manga.coverUrl}`;
 
   return (
     <Layout>
       {/* Header Backdrop */}
       <div className="relative h-64 md:h-80 w-full overflow-hidden">
-        <img src={manga.cover} alt="Background" className="w-full h-full object-cover blur-3xl opacity-30" />
+        <img src={coverUrl} alt="Background" className="w-full h-full object-cover blur-3xl opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
       </div>
 
@@ -37,7 +59,7 @@ export default function MangaDetails() {
           {/* Cover Image */}
           <div className="flex-shrink-0 mx-auto md:mx-0 w-64 md:w-80">
             <div className="aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-4 border-background ring-1 ring-white/10 relative">
-              <img src={manga.cover} alt={manga.title} className="w-full h-full object-cover" />
+              <img src={coverUrl} alt={manga.title} className="w-full h-full object-cover" />
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <Button size="lg" className="w-full text-lg font-bold shadow-lg shadow-primary/20" asChild>
@@ -77,7 +99,7 @@ export default function MangaDetails() {
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <BookOpen className="h-4 w-4" />
-                <span>{manga.chapters} Chapters</span>
+                <span>{chapters.length} Chapters</span>
               </div>
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -107,7 +129,8 @@ export default function MangaDetails() {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-8">
-              {manga.genre.map(genre => (
+              {/* Handle both genres array formats */}
+              {(Array.isArray(manga.genres) ? manga.genres : []).map(genre => (
                 <Badge key={genre} variant="secondary" className="px-3 py-1 text-sm bg-secondary/50 hover:bg-secondary border border-white/5">
                   {genre}
                 </Badge>
@@ -125,7 +148,9 @@ export default function MangaDetails() {
             <div className="bg-card rounded-xl border border-white/5 overflow-hidden">
               <div className="p-4 border-b border-white/5 flex items-center justify-between bg-muted/20">
                 <h3 className="font-bold text-lg">Chapters</h3>
-                <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Updated: {manga.lastUpdated}</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
+                  {chapters.length} chapters available
+                </span>
               </div>
               <ScrollArea className="h-[500px]">
                 <div className="divide-y divide-white/5">
@@ -139,7 +164,7 @@ export default function MangaDetails() {
                           <span className="font-semibold group-hover:text-primary transition-colors text-base">
                             Chapter {chapter.number}: {chapter.title}
                           </span>
-                          <span className="text-xs text-muted-foreground">{chapter.pageUrls.length} pages</span>
+                          <span className="text-xs text-muted-foreground">{chapter.pageUrls?.length || 0} pages</span>
                         </div>
                         
                         {!chapter.isFree ? (

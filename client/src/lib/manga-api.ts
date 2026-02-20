@@ -1,6 +1,6 @@
 import type { User, Manga, Chapter, Transaction, ReadingHistory } from "./types";
 import { pb } from "./pocketbase";
-import type { PBManga } from "./pocketbase-types";
+import type { PBChapter, PBManga } from "./pocketbase-types";
 
 interface AuthResponse {
   user: Omit<User, 'password'>;
@@ -163,30 +163,11 @@ const chapterTitlesByManga: Record<string, string[]> = {
 // Cached chapters for consistency
 const chaptersCache: Map<string, Chapter[]> = new Map();
 
-const getChaptersForManga = (mangaId: string): Chapter[] => {
-  if (chaptersCache.has(mangaId)) {
-    return chaptersCache.get(mangaId)!;
-  }
-  
-  const titles = chapterTitlesByManga[mangaId] || ['Chapter 1', 'Chapter 2', 'Chapter 3', 'Chapter 4', 'Chapter 5'];
-  
-  const chapters: Chapter[] = titles.map((title, i) => {
-    const isSoloLeveling = mangaId === 'solo-leveling';
-    return {
-      id: `${mangaId}-ch-${i + 1}`,
-      mangaId,
-      number: i + 1,
-      title,
-      pageUrls: isSoloLeveling ? SOLO_LEVELING_PAGES : Array.from({ length: 15 }, (_, j) => `https://picsum.photos/seed/page${mangaId}${i}${j}/800/1200`),
-      price: i < 3 ? 0 : 50,
-      isFree: i < 3,
-      releaseDate: new Date(2024, 0, (i + 1) * 7),
-      createdAt: new Date()
-    };
+const getChaptersForManga = async (mangaId: string): Promise<PBChapter[]> => {
+  const chapters = await pb.collection('chapters').getFullList<PBChapter>({
+    filter: `manga = "${mangaId}"`,
   });
-  
-  chaptersCache.set(mangaId, chapters);
-  return chapters;
+  return chapters;  
 };
 
 // Per-user state storage
@@ -318,86 +299,60 @@ class ApiClient {
     );
   }
 
-  async getChaptersByMangaId(mangaId: string): Promise<Chapter[]> {
-    await this.delay();
+  async getChaptersByMangaId(mangaId: string): Promise<PBChapter[]> {
     return getChaptersForManga(mangaId);
   }
 
-  async getChapterById(id: string): Promise<Chapter & { locked?: boolean }> {
-    await this.delay();
-    const [mangaId] = id.split('-ch-');
-    const chapters = getChaptersForManga(mangaId);
-    const chapter = chapters.find(c => c.id === id);
-    if (!chapter) {
-      throw new Error('Chapter not found');
-    }
-    
-    // If chapter is free, return it
-    if (chapter.isFree) {
-      return { ...chapter, locked: false };
-    }
-    
-    // If user is not authenticated, return locked
-    if (!currentUser) {
-      return { ...chapter, pageUrls: [], locked: true };
-    }
-    
-    // Check if user has unlocked this chapter
-    const userState = getOrCreateUserState(currentUser.id);
-    const isUnlocked = userState.unlockedChapters.has(id);
-    
-    if (!isUnlocked) {
-      return { ...chapter, pageUrls: [], locked: true };
-    }
-    
-    return { ...chapter, locked: false };
+  async getChapterById(chapterId: string): Promise<PBChapter> {
+    const chapter = await pb.collection('chapters').getOne<PBChapter>(chapterId);
+    return chapter;
   }
 
-  async unlockChapter(chapterId: string): Promise<{ message: string }> {
-    await this.delay();
-    if (!currentUser) {
-      throw new Error('Not authenticated');
-    }
+  // async unlockChapter(chapterId: string): Promise<{ message: string }> {
+  //   await this.delay();
+  //   if (!currentUser) {
+  //     throw new Error('Not authenticated');
+  //   }
     
-    const [mangaId] = chapterId.split('-ch-');
-    const chapters = getChaptersForManga(mangaId);
-    const chapter = chapters.find(c => c.id === chapterId);
+  //   const [mangaId] = chapterId.split('-ch-');
+  //   const chapters = getChaptersForManga(mangaId);
+  //   const chapter = chapters.find(c => c.id === chapterId);
     
-    if (!chapter) {
-      throw new Error('Chapter not found');
-    }
+  //   if (!chapter) {
+  //     throw new Error('Chapter not found');
+  //   }
     
-    const userState = getOrCreateUserState(currentUser.id);
+  //   const userState = getOrCreateUserState(currentUser.id);
     
-    if (userState.unlockedChapters.has(chapterId) || chapter.isFree) {
-      throw new Error('Chapter already unlocked');
-    }
+  //   if (userState.unlockedChapters.has(chapterId) || chapter.isFree) {
+  //     throw new Error('Chapter already unlocked');
+  //   }
     
-    if (currentUser.coins < chapter.price) {
-      throw new Error('Insufficient coins');
-    }
+  //   if (currentUser.coins < chapter.price) {
+  //     throw new Error('Insufficient coins');
+  //   }
     
-    // Update user coins
-    currentUser = { ...currentUser, coins: currentUser.coins - chapter.price };
-    const mockUser = mockUsers.get(currentUser.id);
-    if (mockUser) {
-      mockUser.coins = currentUser.coins;
-    }
+  //   // Update user coins
+  //   currentUser = { ...currentUser, coins: currentUser.coins - chapter.price };
+  //   const mockUser = mockUsers.get(currentUser.id);
+  //   if (mockUser) {
+  //     mockUser.coins = currentUser.coins;
+  //   }
     
-    userState.unlockedChapters.add(chapterId);
+  //   userState.unlockedChapters.add(chapterId);
     
-    userState.transactions.push({
-      id: String(userState.transactions.length + 1),
-      userId: currentUser.id,
-      type: 'CHAPTER_UNLOCK',
-      amount: -chapter.price,
-      description: `Unlocked Chapter ${chapter.number}`,
-      relatedChapterId: chapterId,
-      createdAt: new Date()
-    });
+  //   userState.transactions.push({
+  //     id: String(userState.transactions.length + 1),
+  //     userId: currentUser.id,
+  //     type: 'CHAPTER_UNLOCK',
+  //     amount: -chapter.price,
+  //     description: `Unlocked Chapter ${chapter.number}`,
+  //     relatedChapterId: chapterId,
+  //     createdAt: new Date()
+  //   });
     
-    return { message: 'Chapter unlocked successfully' };
-  }
+  //   return { message: 'Chapter unlocked successfully' };
+  // }
 
   // User
   async getUserProfile(): Promise<Omit<User, 'password'>> {
@@ -554,40 +509,40 @@ class ApiClient {
     return { message: 'Manga deleted successfully' };
   }
 
-  async createChapter(data: Omit<Chapter, 'id' | 'createdAt'>): Promise<Chapter> {
-    await this.delay();
-    const newChapter: Chapter = {
-      ...data,
-      id: `${data.mangaId}-ch-new-${Date.now()}`,
-      createdAt: new Date()
-    };
-    const chapters = getChaptersForManga(data.mangaId);
-    chapters.push(newChapter);
-    return newChapter;
-  }
+  // async createChapter(data: Omit<Chapter, 'id' | 'createdAt'>): Promise<Chapter> {
+  //   await this.delay();
+  //   const newChapter: Chapter = {
+  //     ...data,
+  //     id: `${data.mangaId}-ch-new-${Date.now()}`,
+  //     createdAt: new Date()
+  //   };
+  //   const chapters = getChaptersForManga(data.mangaId);
+  //   chapters.push(newChapter);
+  //   return newChapter;
+  // }
 
-  async updateChapter(id: string, data: Partial<Chapter>): Promise<Chapter> {
-    await this.delay();
-    const [mangaId] = id.split('-ch-');
-    const chapters = getChaptersForManga(mangaId);
-    const index = chapters.findIndex(c => c.id === id);
-    if (index === -1) {
-      throw new Error('Chapter not found');
-    }
-    chapters[index] = { ...chapters[index], ...data };
-    return chapters[index];
-  }
+  // async updateChapter(id: string, data: Partial<Chapter>): Promise<Chapter> {
+  //   await this.delay();
+  //   const [mangaId] = id.split('-ch-');
+  //   const chapters = getChaptersForManga(mangaId);
+  //   const index = chapters.findIndex(c => c.id === id);
+  //   if (index === -1) {
+  //     throw new Error('Chapter not found');
+  //   }
+  //   chapters[index] = { ...chapters[index], ...data };
+  //   return chapters[index];
+  // }
 
-  async deleteChapter(id: string): Promise<{ message: string }> {
-    await this.delay();
-    const [mangaId] = id.split('-ch-');
-    const chapters = getChaptersForManga(mangaId);
-    const index = chapters.findIndex(c => c.id === id);
-    if (index !== -1) {
-      chapters.splice(index, 1);
-    }
-    return { message: 'Chapter deleted successfully' };
-  }
+  // async deleteChapter(id: string): Promise<{ message: string }> {
+  //   await this.delay();
+  //   const [mangaId] = id.split('-ch-');
+  //   const chapters = getChaptersForManga(mangaId);
+  //   const index = chapters.findIndex(c => c.id === id);
+  //   if (index !== -1) {
+  //     chapters.splice(index, 1);
+  //   }
+  //   return { message: 'Chapter deleted successfully' };
+  // }
 }
 
-export const api = new ApiClient();
+export const mangaApi = new ApiClient();

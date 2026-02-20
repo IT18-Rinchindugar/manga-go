@@ -1,6 +1,6 @@
 import { useRoute, Link } from "wouter";
 import { MOCK_MANGA } from "@/lib/mock-data";
-import { api } from "@/lib/api";
+import { mangaApi } from "@/lib/manga-api";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
@@ -23,8 +23,20 @@ export default function Reader() {
 
   const { data: chapters = [], isLoading } = useQuery({
     queryKey: ['chapters', params?.mangaId],
-    queryFn: () => api.getChaptersByMangaId(params?.mangaId || ''),
+    queryFn: () => mangaApi.getChaptersByMangaId(params?.mangaId || ''),
     enabled: !!params?.mangaId
+  });
+
+  const manga = {
+    id: params?.mangaId || '',
+    title: 'Manga Title',
+    author: 'Manga Author'
+  };
+
+  const { data: chapter = null, isLoading: chapterLoading } = useQuery({
+    queryKey: ['chapter', params?.chapterId],
+    queryFn: () => mangaApi.getChapterById(params?.chapterId || ''),
+    enabled: !!params?.chapterId
   });
 
   useEffect(() => {
@@ -36,17 +48,15 @@ export default function Reader() {
   }, [showControls]);
 
   if (!params) return <NotFound />;
-
-  const manga = MOCK_MANGA.find(m => m.id === params.mangaId);
-  const chapter = chapters.find(c => c.id === params.chapterId);
   
-  if (isLoading) {
+  if (isLoading || chapterLoading) {
     return (
       <div className="min-h-screen bg-[#111] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
+
   
   if (!manga || !chapter) return <NotFound />;
 
