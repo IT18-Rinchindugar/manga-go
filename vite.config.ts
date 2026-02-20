@@ -7,7 +7,6 @@ import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
 export default defineConfig({
   // Ensure environment variables with VITE_ prefix are exposed to the client
-  envPrefix: "VITE_",
   plugins: [
     react(),
     runtimeErrorOverlay(),

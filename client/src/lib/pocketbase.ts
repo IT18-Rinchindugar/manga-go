@@ -2,7 +2,15 @@ import PocketBase from 'pocketbase';
 import type { PBCollections } from './pocketbase-types';
 
 // Get PocketBase URL from environment variables
+console.log('Environment check:', {
+  'VITE_POCKETBASE_URL': import.meta.env.VITE_POCKETBASE_URL,
+  'MODE': import.meta.env.MODE,
+  'DEV': import.meta.env.DEV,
+  'All env vars': import.meta.env,
+});
+
 const POCKETBASE_URL = import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090';
+console.log('Using PocketBase URL:', POCKETBASE_URL);
 
 // Create and export a singleton PocketBase instance with typed collections
 export const pb = new PocketBase(POCKETBASE_URL);

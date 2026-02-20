@@ -17,7 +17,7 @@ export type TransactionType = 'COIN_PURCHASE' | 'CHAPTER_UNLOCK';
 // PocketBase Auth User (extends built-in users collection)
 export interface PBUser extends BaseRecord {
   email: string;
-  username?: string;
+  username: string; // Made required - fallback will be email prefix or 'User'
   name?: string;
   avatar?: string;
   role: UserRole;
