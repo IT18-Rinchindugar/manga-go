@@ -304,8 +304,17 @@ class ApiClient {
   }
 
   async getChapterById(chapterId: string): Promise<PBChapter> {
-    const chapter = await pb.collection('chapters').getOne<PBChapter>(chapterId);
-    return chapter;
+    let chapter = await pb.collection('chapters').getOne<PBChapter>(chapterId);
+
+    if (!chapter) {
+      throw new Error('Chapter not found');
+    }
+
+    if (chapter?.pageUrls?.length > 0) {
+      return { ...chapter, pageUrls: chapter.pageUrls.map(url => `${import.meta.env.VITE_CLOUDFRONT_URL}/${url}`) };
+    }
+
+    return { ...chapter, pageUrls: [] };
   }
 
   // async unlockChapter(chapterId: string): Promise<{ message: string }> {
