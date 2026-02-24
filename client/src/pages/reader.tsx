@@ -18,7 +18,11 @@ export default function Reader() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showControls, setShowControls] = useState(true);
   const [readingMode, setReadingMode] = useState<'vertical' | 'single'>('vertical');
-  const [zoom, setZoom] = useState(100);
+  const [zoom, setZoom] = useState(() => {
+    // Check if device is mobile (screen width less than 768px)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    return isMobile ? 150 : 100;
+  });
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const { data: chapters = [], isLoading } = useQuery({
@@ -103,22 +107,22 @@ export default function Reader() {
                 <List className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <h3 className="font-bold mb-4">Chapters</h3>
+            <SheetContent className="bg-zinc-900/95 backdrop-blur-xl border-zinc-700/50 shadow-2xl">
+              <h3 className="font-bold mb-4 text-zinc-100">Chapters</h3>
               <ScrollArea className="h-[calc(100vh-100px)]">
                 <div className="space-y-1">
-                   {chapters.map(c => (
-                     <Button 
-                       key={c.id}
-                       variant={c.id === chapter.id ? "secondary" : "ghost"} 
-                       className="w-full justify-start"
-                       asChild
-                     >
-                       <Link href={`/read/${manga.id}/${c.id}`}>
-                         Chapter {c.number}: {c.title}
-                       </Link>
-                     </Button>
-                   ))}
+                  {chapters.map(c => (
+                    <Button 
+                      key={c.id}
+                      variant={c.id === chapter.id ? "secondary" : "ghost"} 
+                      className="w-full justify-start hover:bg-white/10 transition-colors"
+                      asChild
+                    >
+                      <Link href={`/read/${manga.id}/${c.id}`}>
+                        Chapter {c.number}: {c.title}
+                      </Link>
+                    </Button>
+                  ))}
                 </div>
               </ScrollArea>
             </SheetContent>
@@ -130,26 +134,26 @@ export default function Reader() {
                 <Settings className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="bg-zinc-900/95 backdrop-blur-xl border-zinc-700/50 shadow-2xl">
               <div className="space-y-6 py-6">
                 <div>
-                  <Label className="mb-2 block">Reading Mode</Label>
-                  <ToggleGroup type="single" value={readingMode} onValueChange={(v) => v && setReadingMode(v as any)}>
-                    <ToggleGroupItem value="vertical" aria-label="Vertical Scroll" className="flex-1">
+                  <Label className="mb-2 block text-zinc-100 font-medium">Reading Mode</Label>
+                  <ToggleGroup type="single" value={readingMode} onValueChange={(v) => v && setReadingMode(v as any)} className="bg-zinc-800/50 rounded-lg p-1">
+                    <ToggleGroupItem value="vertical" aria-label="Vertical Scroll" className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-md">
                       Vertical
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="single" aria-label="Single Page" className="flex-1">
+                    <ToggleGroupItem value="single" aria-label="Single Page" className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-md">
                       Single Page
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </div>
                 
-                <Separator />
+                <Separator className="bg-zinc-700/50" />
                 
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <Label>Zoom Level</Label>
-                    <span className="text-xs text-muted-foreground">{zoom}%</span>
+                  <div className="flex justify-between mb-3">
+                    <Label className="text-zinc-100 font-medium">Zoom Level</Label>
+                    <span className="text-sm text-zinc-400 font-mono">{zoom}%</span>
                   </div>
                   <Slider 
                     value={[zoom]} 
@@ -157,6 +161,7 @@ export default function Reader() {
                     max={150} 
                     step={10} 
                     onValueChange={(v) => setZoom(v[0])} 
+                    className="cursor-pointer"
                   />
                 </div>
               </div>

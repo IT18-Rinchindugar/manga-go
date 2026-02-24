@@ -50,7 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </a>
             </Link>
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-              <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>{t('common.home')}</a></Link>
+              {/* <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>{t('common.home')}</a></Link> */}
               <Link href="/browse"><a className={`hover:text-primary transition-colors ${location === '/browse' ? 'text-primary' : ''}`}>{t('common.browse')}</a></Link>
               <Link href="/genres"><a className="hover:text-primary transition-colors">{t('common.genres')}</a></Link>
             </nav>
@@ -135,10 +135,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/"><a className="text-lg font-medium hover:text-primary">{t('common.home')}</a></Link>
-                  <Link href="/browse"><a className="text-lg font-medium hover:text-primary">{t('common.browse')}</a></Link>
-                  <Link href="/latest"><a className="text-lg font-medium hover:text-primary">{t('common.latest')}</a></Link>
-                  <Link href="/genres"><a className="text-lg font-medium hover:text-primary">{t('common.genres')}</a></Link>
+                  {/* <Link href="/"><a className="text-lg font-medium hover:text-primary">{t('common.home')}</a></Link>  */}
+                  <Link href="/browse"><a className="text-lg font-medium hover:text-primary text-zinc-100">{t('common.browse')}</a></Link>
+                  <Link href="/latest"><a className="text-lg font-medium hover:text-primary text-zinc-100">{t('common.latest')}</a></Link>
+                  <Link href="/genres"><a className="text-lg font-medium hover:text-primary text-zinc-100">{t('common.genres')}</a></Link>
                   {!user && (
                     <Link href="/auth">
                       <Button className="mt-4 w-full">{t('common.signIn')}</Button>
