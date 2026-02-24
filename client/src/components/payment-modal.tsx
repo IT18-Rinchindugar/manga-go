@@ -2,8 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Coins, CreditCard } from "lucide-react";
 import { useState } from "react";
-import { api } from "@/lib/api";
-import { useAuth } from "@/lib/auth-context";
+import { api } from "@/services/api";
+import { useAuth } from "@/context/auth-context";
 import { toast } from "sonner";
 
 interface PaymentModalProps {

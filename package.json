@@ -9,7 +9,8 @@
     "build": "vite build",
     "build:custom": "tsx script/build.ts",
     "start": "npx serve dist/public -p 5000",
-    "check": "tsc"
+    "check": "tsc",
+    "commit": "npx git-cz"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

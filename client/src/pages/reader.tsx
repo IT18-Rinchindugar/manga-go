@@ -1,6 +1,6 @@
 import { useRoute, Link } from "wouter";
 import { MOCK_MANGA } from "@/lib/mock-data";
-import { mangaApi } from "@/lib/manga-api";
+import { mangaApi } from "@/services/manga-api";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";

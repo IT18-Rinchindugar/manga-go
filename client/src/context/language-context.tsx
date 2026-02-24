@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import i18n from './i18n';
+import i18n from '../lib/i18n';
 import { TFunction } from 'i18next';
 
 interface LanguageContextType {

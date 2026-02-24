@@ -28,9 +28,9 @@
  */
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { pb } from './pocketbase';
-import type { PBUser, OAuth2Provider } from './pocketbase-types';
-import type { RecordAuthResponse, RecordModel } from 'pocketbase';
+import { pb } from '../lib/pocketbase';
+import type { PBUser, OAuth2Provider } from '../lib/pocketbase-types';
+import type { RecordModel } from 'pocketbase';
 
 // Convert PocketBase user to our app user format
 function convertPBUserToAppUser(pbUser: RecordModel | null): Omit<PBUser, 'password'> | null {

@@ -1,6 +1,6 @@
 import { useRoute, Link } from "wouter";
-import { mangaApi } from "@/lib/manga-api";
-import { api } from "@/lib/api";
+import { mangaApi } from "@/services/manga-api";
+import { api } from "@/services/api";
 import Layout from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

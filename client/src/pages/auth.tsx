@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth-context';
-import { useLanguage } from '@/lib/language-context';
+import { useAuth } from '@/context/auth-context';
+import { useLanguage } from '@/context/language-context';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

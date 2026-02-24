@@ -6,7 +6,7 @@ import { ArrowRight, Flame, Sparkles, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api } from "@/services/api";
 import type { PBManga } from "@/lib/pocketbase-types";
 
 export default function Home() {

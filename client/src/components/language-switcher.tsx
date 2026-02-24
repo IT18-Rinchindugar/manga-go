@@ -1,4 +1,4 @@
-import { useLanguage } from "@/lib/language-context";
+import { useLanguage } from "@/context/language-context";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
