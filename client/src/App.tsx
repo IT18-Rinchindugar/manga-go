@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/auth-context";
 import { LanguageProvider } from "@/context/language-context";
+import { LoginModalProvider } from "@/context/login-modal-context";
 import "@/lib/i18n"; // Initialize i18n
 import { useEffect } from "react";
 import NotFound from "@/pages/not-found";
@@ -65,11 +66,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <ScrollToTop />
-            <Router />
-          </TooltipProvider>
+          <LoginModalProvider>
+            <TooltipProvider>
+              <Toaster />
+              <ScrollToTop />
+              <Router />
+            </TooltipProvider>
+          </LoginModalProvider>
         </AuthProvider>
       </LanguageProvider>
     </QueryClientProvider>

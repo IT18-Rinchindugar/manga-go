@@ -11,9 +11,13 @@ import NotFound from "@/pages/not-found";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/context/auth-context";
+import { useLoginModal } from "@/hooks/use-login-modal";
 
 export default function MangaDetails() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { isOpen, openLoginModal, closeLoginModal } = useLoginModal();
   const [match, params] = useRoute("/manga/:id");
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -73,7 +77,13 @@ export default function MangaDetails() {
                 <Button 
                   variant={isFavorite ? "default" : "secondary"} 
                   className="w-full"
-                  onClick={() => setIsFavorite(!isFavorite)}
+                  onClick={() => {
+                    if (!user) {
+                      openLoginModal();
+                      return;
+                    }
+                    setIsFavorite(!isFavorite);
+                  }}
                 >
                   <Heart className={`mr-2 h-4 w-4 ${isFavorite ? "fill-current" : ""}`} /> 
                   {isFavorite ? t('common.saved') : t('common.favorite')}
@@ -161,6 +171,12 @@ export default function MangaDetails() {
                     <Link 
                       key={chapter.id} 
                       href={!chapter.isFree ? "#" : `/read/${manga.id}/${chapter.id}`}
+                      onClick={(e) => {
+                        if (!chapter.isFree && !user) {
+                          e.preventDefault();
+                          openLoginModal();
+                        }
+                      }}
                       className={`flex items-center justify-between p-4 hover:bg-white/5 transition-colors group ${!chapter.isFree ? 'opacity-70' : ''}`}
                     >
                         <div className="flex flex-col gap-1">
