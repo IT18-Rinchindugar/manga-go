@@ -1,10 +1,9 @@
 import { useRoute, Link } from "wouter";
-import { MOCK_MANGA } from "@/lib/mock-data";
 import { mangaApi } from "@/services/manga-api";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
-import { ChevronLeft, ChevronRight, Menu, Settings, MessageSquare, List, Maximize, Minimize, Type, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Settings, List, Maximize, Minimize, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import NotFound from "@/pages/not-found";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -12,8 +11,10 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export default function Reader() {
+  const { t } = useTranslation();
   const [match, params] = useRoute("/read/:mangaId/:chapterId");
   const [currentPage, setCurrentPage] = useState(1);
   const [showControls, setShowControls] = useState(true);
@@ -108,7 +109,7 @@ export default function Reader() {
               </Button>
             </SheetTrigger>
             <SheetContent className="bg-zinc-900/95 backdrop-blur-xl border-zinc-700/50 shadow-2xl">
-              <h3 className="font-bold mb-4 text-zinc-100">Chapters</h3>
+              <h3 className="font-bold mb-4 text-zinc-100">{t('manga.chapters')}</h3>
               <ScrollArea className="h-[calc(100vh-100px)]">
                 <div className="space-y-1">
                   {chapters.map(c => (
@@ -137,13 +138,13 @@ export default function Reader() {
             <SheetContent side="right" className="bg-zinc-900/95 backdrop-blur-xl border-zinc-700/50 shadow-2xl">
               <div className="space-y-6 py-6">
                 <div>
-                  <Label className="mb-2 block text-zinc-100 font-medium">Reading Mode</Label>
+                  <Label className="mb-2 block text-zinc-100 font-medium">{t('reader.readingMode')}</Label>
                   <ToggleGroup type="single" value={readingMode} onValueChange={(v) => v && setReadingMode(v as any)} className="bg-zinc-800/50 rounded-lg p-1">
                     <ToggleGroupItem value="vertical" aria-label="Vertical Scroll" className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-md">
-                      Vertical
+                      {t('reader.vertical')}
                     </ToggleGroupItem>
                     <ToggleGroupItem value="single" aria-label="Single Page" className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-md">
-                      Single Page
+                      {t('reader.singlePage')}
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </div>
@@ -152,7 +153,7 @@ export default function Reader() {
                 
                 <div>
                   <div className="flex justify-between mb-3">
-                    <Label className="text-zinc-100 font-medium">Zoom Level</Label>
+                    <Label className="text-zinc-100 font-medium">{t('reader.zoomLevel')}</Label>
                     <span className="text-sm text-zinc-400 font-mono">{zoom}%</span>
                   </div>
                   <Slider 
@@ -208,12 +209,13 @@ export default function Reader() {
         
         <div className="flex items-center justify-between gap-4 max-w-3xl mx-auto w-full">
            <Button variant="ghost" disabled={currentPage === 1} onClick={(e) => { e.stopPropagation(); setCurrentPage(p => Math.max(1, p-1)); }}>
-             <ChevronLeft className="mr-2 h-4 w-4" /> Prev
+             <ChevronLeft className="mr-2 h-4 w-4" /> 
+             {t('reader.prev')}
            </Button>
            
            <div className="flex-1 flex flex-col gap-2 max-w-xs">
              <div className="flex justify-between text-xs text-muted-foreground">
-               <span>Page {currentPage}</span>
+               <span>{t('manga.page')} {currentPage}</span>
                <span>{totalPages}</span>
              </div>
              <Slider 
@@ -226,7 +228,7 @@ export default function Reader() {
            </div>
 
            <Button variant="ghost" disabled={currentPage === totalPages} onClick={(e) => { e.stopPropagation(); setCurrentPage(p => Math.min(totalPages, p+1)); }}>
-             Next <ChevronRight className="ml-2 h-4 w-4" />
+             {t('reader.next')} <ChevronRight className="ml-2 h-4 w-4" />
            </Button>
         </div>
       </div>

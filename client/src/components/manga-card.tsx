@@ -4,6 +4,7 @@ import { Manga } from "@/lib/mock-data";
 import type { PBManga } from "@/lib/pocketbase-types";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface MangaCardProps {
   manga: Manga | PBManga;
@@ -15,6 +16,7 @@ function isPBManga(manga: Manga | PBManga): manga is PBManga {
 }
 
 export default function MangaCard({ manga }: MangaCardProps) {
+  const { t } = useTranslation();
   // Get values based on manga type
   const cover = isPBManga(manga) ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/${manga.collectionId}/${manga.id}/${manga.coverUrl}` : manga.cover;
   const rating = manga.rating;
@@ -60,11 +62,11 @@ export default function MangaCard({ manga }: MangaCardProps) {
             <div className="flex items-center gap-2 text-xs text-gray-300">
               {chapters > 0 && (
                 <>
-                  <span>{chapters} Chapters</span>
+                  <span>{chapters} {t('manga.chapters')}</span>
                   <span>•</span>
                 </>
               )}
-              <span>{status}</span>
+              <span>{t(`manga.${status.toLowerCase()}`)}</span>
             </div>
           </div>
         </div>

@@ -15,6 +15,9 @@
     "startReading": "Start Reading",
     "continue": "Continue",
     "readFirstChapter": "Read First Chapter",
+    "saved": "Saved",
+    "favorite": "Favorite",
+    "share": "Share",
     "loading": "Loading...",
     "loggingIn": "Logging in...",
     "creatingAccount": "Creating account...",
@@ -62,6 +65,8 @@
     "hiatus": "Hiatus",
     "rating": "Rating",
     "reviews": "reviews",
+    "reviewsNumber": "reviews",
+    "numberOfChapters": "chapters",
     "author": "Author",
     "artist": "Artist",
     "releaseYear": "Release Year"

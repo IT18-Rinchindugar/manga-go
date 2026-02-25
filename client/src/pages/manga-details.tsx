@@ -10,8 +10,10 @@ import { Play, Star, Clock, BookOpen, Lock, Coins, Heart, Share2, Calendar, User
 import NotFound from "@/pages/not-found";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export default function MangaDetails() {
+  const { t } = useTranslation();
   const [match, params] = useRoute("/manga/:id");
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -61,23 +63,24 @@ export default function MangaDetails() {
             <div className="aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border-4 border-background ring-1 ring-white/10 relative">
               <img src={coverUrl} alt={manga.title} className="w-full h-full object-cover" />
             </div>
-            <div className="mt-6 flex flex-col gap-3">
-              <Button size="lg" className="w-full text-lg font-bold shadow-lg shadow-primary/20" asChild>
+            <div className="mt-6 flex flex-col gap-2">
+              <Button size="lg" className="w-full text-md font-bold shadow-lg shadow-primary/20" asChild>
                 <Link href={chapters.length > 0 ? `/read/${manga.id}/${chapters[0].id}` : '#'}>
-                  <Play className="mr-2 h-5 w-5 fill-current" /> Read First Chapter
+                  <Play className="mr-2 h-5 w-5 fill-current" />{t('common.readFirstChapter')}
                 </Link>
               </Button>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant={isFavorite ? "default" : "secondary"} 
                   className="w-full"
                   onClick={() => setIsFavorite(!isFavorite)}
                 >
                   <Heart className={`mr-2 h-4 w-4 ${isFavorite ? "fill-current" : ""}`} /> 
-                  {isFavorite ? "Saved" : "Favorite"}
+                  {isFavorite ? t('common.saved') : t('common.favorite')}
                 </Button>
                 <Button variant="outline" className="w-full">
-                  <Share2 className="mr-2 h-4 w-4" /> Share
+                  <Share2 className="mr-2 h-4 w-4" />
+                  {t('common.share')}
                 </Button>
               </div>
             </div>
@@ -85,7 +88,7 @@ export default function MangaDetails() {
 
           {/* Details */}
           <div className="flex-1 pt-4">
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-2">{manga.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">{manga.title}</h1>
             {manga.altTitle && (
               <h2 className="text-xl text-muted-foreground mb-4 font-medium">{manga.altTitle}</h2>
             )}
@@ -94,17 +97,17 @@ export default function MangaDetails() {
               <div className="flex items-center gap-1 text-yellow-500 font-bold bg-yellow-500/10 px-2 py-1 rounded">
                 <Star className="h-5 w-5 fill-current" />
                 <span className="text-lg">{manga.rating}</span>
-                <span className="text-muted-foreground font-normal ml-1 text-sm">({manga.reviews} reviews)</span>
+                <span className="text-muted-foreground font-normal ml-1 text-sm">({manga.reviews} {t('manga.reviewsNumber')})</span>
               </div>
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <BookOpen className="h-4 w-4" />
-                <span>{chapters.length} Chapters</span>
+                <span>{chapters.length} {t('manga.chapters')}</span>
               </div>
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Clock className="h-4 w-4" />
-                <span className="capitalize">{manga.status}</span>
+                <span>{t(`manga.${manga.status.toLowerCase()}`)}</span>
               </div>
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -116,13 +119,13 @@ export default function MangaDetails() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 mb-6 text-sm">
                <div className="flex items-center gap-2">
                  <User className="h-4 w-4 text-primary" />
-                 <span className="text-muted-foreground">Author:</span>
+                 <span className="text-muted-foreground">{t('manga.author')}:</span>
                  <span className="font-medium">{manga.author}</span>
                </div>
                {manga.artist && (
                  <div className="flex items-center gap-2">
                    <Palette className="h-4 w-4 text-primary" />
-                   <span className="text-muted-foreground">Artist:</span>
+                   <span className="text-muted-foreground">{t('manga.artist')}:</span>
                    <span className="font-medium">{manga.artist}</span>
                  </div>
                )}
@@ -138,7 +141,7 @@ export default function MangaDetails() {
             </div>
 
             <div className="mb-8 p-6 rounded-xl bg-secondary/20 border border-white/5">
-              <h3 className="text-lg font-bold mb-2 text-foreground/80">Synopsis</h3>
+              <h3 className="text-lg font-bold mb-2 text-foreground/80">{t('manga.synopsis')}</h3>
               <p className="text-muted-foreground leading-relaxed text-lg">
                 {manga.synopsis}
               </p>
@@ -147,9 +150,9 @@ export default function MangaDetails() {
             {/* Chapters List */}
             <div className="bg-card rounded-xl border border-white/5 overflow-hidden">
               <div className="p-4 border-b border-white/5 flex items-center justify-between bg-muted/20">
-                <h3 className="font-bold text-lg">Chapters</h3>
+                <h3 className="font-bold text-lg">{t('manga.chapters')}</h3>
                 <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-                  {chapters.length} chapters available
+                  {chapters.length} {t('manga.chapters')}
                 </span>
               </div>
               <ScrollArea className="h-[500px]">
@@ -162,9 +165,9 @@ export default function MangaDetails() {
                     >
                         <div className="flex flex-col gap-1">
                           <span className="font-semibold group-hover:text-primary transition-colors text-base">
-                            Chapter {chapter.number}: {chapter.title}
+                            {t('manga.chapter')} {chapter.number} {chapter?.title ? `: ${chapter.title}` : ''}
                           </span>
-                          <span className="text-xs text-muted-foreground">{chapter.pageUrls?.length || 0} pages</span>
+                          <span className="text-xs text-muted-foreground">{chapter.pageUrls?.length || 0} {t('manga.pages')}</span>
                         </div>
                         
                         {!chapter.isFree ? (
@@ -176,7 +179,7 @@ export default function MangaDetails() {
                           </div>
                         ) : (
                           <Badge variant="outline" className="border-primary/50 text-primary bg-primary/5">
-                            Free
+                            {t('manga.free')}
                           </Badge>
                         )}
                     </Link>

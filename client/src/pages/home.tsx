@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import type { PBManga } from "@/lib/pocketbase-types";
+import { Link } from "wouter";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -30,61 +31,59 @@ export default function Home() {
     queryFn: () => api.getNewManga(),
   });
 
-  // Helper function to convert PBManga to display format
-  const getMangaCover = (manga: PBManga) => {
-    // PocketBase returns the coverUrl as a relative path, so we need to construct the full URL
-    return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/mangas/${manga.id}/${manga.coverUrl}`;
-  };
-  
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
+      <section className="relative h-[40vh] sm:h-[50vh] md:h-[70vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src={featuredManga?.coverUrl || HERO_IMAGE} 
+            src={`${import.meta.env.VITE_POCKETBASE_URL}/api/files/mangas/${featuredManga?.id}/${featuredManga?.bannerUrl}`} 
             alt="Hero Banner" 
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/30 to-transparent" />
         </div>
 
-        <div className="relative container mx-auto px-4 h-full flex flex-col justify-end pb-20 md:pb-32">
+        <div className="relative container mx-auto px-3 sm:px-4 h-full flex flex-col justify-end pb-12 sm:pb-16 md:pb-24 lg:pb-32">
           {featuredLoading ? (
             <div className="flex items-center justify-center h-full">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+              <Loader2 className="h-8 w-8 sm:h-12 sm:w-12 animate-spin text-primary" />
             </div>
           ) : featuredManga ? (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="max-w-2xl"
+              className="max-w-full sm:max-w-2xl"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <span className="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-                  Featured Series
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 md:mb-4">
+                <span className="bg-primary/20 text-primary border border-primary/30 px-3 py-1 sm:px-3 sm:py-1 rounded-full text-[8px] sm:text-sm font-semibold uppercase tracking-wider sm:tracking-widest backdrop-blur-md">
+                  {t('manga.featuredSeries')}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-4 leading-tight">
+              <h1 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-display font-bold text-white mb-2 sm:mb-3 md:mb-4 leading-tight">
                 {featuredManga.title}
                 {featuredManga.altTitle && (
                   <><br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
                     {featuredManga.altTitle}
                   </span></>
                 )}
               </h1>
-              <p className="text-lg md:text-xl text-gray-200 mb-8 line-clamp-3 md:line-clamp-none max-w-xl">
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 md:mb-8 line-clamp-2 sm:line-clamp-3 md:line-clamp-3 max-w-lg">
                 {featuredManga.synopsis}
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="rounded-full px-8 text-lg font-semibold shadow-lg shadow-primary/25">
-                  Start Reading
+              <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4">
+                <Button size="sm" className="sm:size-default md:size-lg rounded-full px-4 sm:px-6 md:px-8 text-xs sm:text-sm md:text-sm lg:text-base font-semibold shadow-lg shadow-primary/25" asChild>
+                  <Link href={`/manga/${featuredManga.id}`}>
+                    {t('common.startReading')}
+                  </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-full px-8 text-lg font-semibold bg-white/5 backdrop-blur-sm border-white/20 hover:bg-white/10">
-                  View Details
+                <Button size="sm" variant="outline" className="sm:size-default md:size-lg rounded-full px-4 sm:px-6 md:px-8 text-xs sm:text-sm md:text-sm lg:text-base font-semibold bg-white/5 backdrop-blur-sm border-white/20 hover:bg-white/10" asChild>
+                  <Link href={`/manga/${featuredManga.id}`}>
+                    {t('common.viewDetails')}
+                  </Link>
                 </Button>
               </div>
             </motion.div>
@@ -93,26 +92,26 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="max-w-2xl"
+              className="max-w-full sm:max-w-2xl"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <span className="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-                  Featured Series
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 md:mb-4">
+                <span className="bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest backdrop-blur-md">
+                  {t('manga.featuredSeries')}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-4 leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-white mb-2 sm:mb-3 md:mb-4 leading-tight">
                 Neon Ronin:<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">Cyber City</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">Cyber City</span>
               </h1>
-              <p className="text-lg md:text-xl text-gray-200 mb-8 line-clamp-3 md:line-clamp-none max-w-xl">
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 md:mb-8 line-clamp-2 sm:line-clamp-3 md:line-clamp-none max-w-xl">
                 In a world where steel meets soul, a lone warrior navigates the neon-drenched streets of Neo-Tokyo to find the truth about his past.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="rounded-full px-8 text-lg font-semibold shadow-lg shadow-primary/25">
-                  Start Reading
+              <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4">
+                <Button size="sm" className="sm:size-default md:size-lg rounded-full px-4 sm:px-6 md:px-8 text-xs sm:text-sm md:text-sm lg:text-base font-semibold shadow-lg shadow-primary/25">
+                  {t('common.startReading')}
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-full px-8 text-lg font-semibold bg-white/5 backdrop-blur-sm border-white/20 hover:bg-white/10">
-                  View Details
+                <Button size="sm" variant="outline" className="sm:size-default md:size-lg rounded-full px-4 sm:px-6 md:px-8 text-xs sm:text-sm md:text-sm lg:text-base font-semibold bg-white/5 backdrop-blur-sm border-white/20 hover:bg-white/10" asChild>
+                  {t('common.viewDetails')}
                 </Button>
               </div>
             </motion.div>
@@ -121,11 +120,11 @@ export default function Home() {
       </section>
 
       {/* Popular Section */}
-      <section className="py-12 container mx-auto px-4">
+      <section className="py-8 md:py-12 container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
             <Flame className="h-6 w-6 text-orange-500 fill-orange-500" />
-            <h2 className="text-2xl md:text-3xl font-bold font-display">
+            <h2 className="text-lg md:text-2xl font-bold font-display">
               {t('manga.popularThisWeek')}
             </h2>
           </div>
@@ -163,7 +162,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-primary fill-primary" />
-              <h2 className="text-2xl md:text-3xl font-bold font-display">
+              <h2 className="text-lg md:text-2xl font-bold font-display">
                 {t('manga.newReleases')}
               </h2>
             </div>

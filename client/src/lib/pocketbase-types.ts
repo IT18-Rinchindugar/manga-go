@@ -28,6 +28,7 @@ export interface PBUser extends BaseRecord {
 
 // Manga record in PocketBase
 export interface PBManga extends BaseRecord {
+  id: string;
   title: string;
   altTitle?: string;
   author: string;
@@ -39,6 +40,7 @@ export interface PBManga extends BaseRecord {
   releaseYear: number;
   rating: string;
   reviews: number;
+  bannerUrl?: string;
 }
 
 // Chapter record in PocketBase

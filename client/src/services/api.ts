@@ -295,7 +295,7 @@ class ApiClient {
     return records.items;
   }
 
-  async getFeaturedManga(): Promise<PBManga | null> {
+  async getFeaturedManga(): Promise<PBManga> {
     const records = await pb.collection('mangas').getList<PBManga>(1, 1, {
       sort: '-created',
       filter: 'isFeatured = true && status != "Draft"',
