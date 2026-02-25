@@ -152,7 +152,9 @@
     "createAccount": "Бүртгэл үүсгэх",
     "passwordMismatch": "Нууц үг таарахгүй байна",
     "demoUser": "Хэрэглэгч: demo / user123",
-    "demoAdmin": "Админ: admin / admin123"
+    "demoAdmin": "Админ: admin / admin123",
+    "continueWithGoogle": "Google-аар нэвтрэх",
+    "byContinuing": "Үргэлжлүүлэхэд та эрх хуулийн нөхцөлүүдийг зөвшөөрч, нууцлалын бодлогын нөхцөлүүдийг зөвшөөрч байна"
   },
   "notifications": {
     "loginSuccess": "Амжилттай нэвтэрлээ!",

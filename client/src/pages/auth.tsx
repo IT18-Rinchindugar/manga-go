@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/auth-context';
-import { useLanguage } from '@/context/language-context';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Auth() {
   const { loginWithOAuth2 } = useAuth();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
 
@@ -38,24 +38,30 @@ export default function Auth() {
       <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-violet-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       
-      {/* Grid pattern overlay */}
+      {/* Background image overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-50"
         style={{
-          backgroundImage: `linear-gradient(rgba(168, 85, 247, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.5) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px'
+          backgroundImage: `url('/login-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }}
       />
-      
-      {/* Decorative manga-style elements */}
-      <div className="absolute top-10 left-10 text-primary/10 text-9xl font-display select-none" style={{ fontFamily: 'Carter One' }}>漫</div>
-      <div className="absolute bottom-10 right-10 text-primary/10 text-9xl font-display select-none" style={{ fontFamily: 'Carter One' }}>画</div>
-      
+
+      {/* Back Button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setLocation('/')}
+        className="absolute top-4 left-4 z-20 text-foreground/70 hover:text-foreground hover:bg-white/10"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back
+      </Button>
+
       <Card className="relative z-10 w-full max-w-md border-primary/20 shadow-2xl shadow-primary/10 backdrop-blur-sm bg-card/95">
         <CardHeader className="text-center">
-          <h1 className="text-4xl font-display text-primary mb-2" style={{ fontFamily: 'Carter One, system-ui' }}>
-            {t('appName')}
-          </h1>
           <CardDescription>{t('auth.welcomeMessage')}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,13 +100,13 @@ export default function Auth() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Continue with Google
+                  {t('auth.continueWithGoogle')}
                 </>
               )}
             </Button>
 
             <div className="text-center text-xs text-muted-foreground px-4">
-              By continuing, you agree to our Terms of Service and Privacy Policy
+              {t('auth.byContinuing')}
             </div>
           </div>
         </CardContent>

@@ -152,7 +152,9 @@
     "createAccount": "Create Account",
     "passwordMismatch": "Passwords do not match",
     "demoUser": "User: demo / user123",
-    "demoAdmin": "Admin: admin / admin123"
+    "demoAdmin": "Admin: admin / admin123",
+    "continueWithGoogle": "Continue with Google",
+    "byContinuing": "By continuing, you agree to our Terms of Service and Privacy Policy"
   },
   "notifications": {
     "loginSuccess": "Logged in successfully!",

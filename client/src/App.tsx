@@ -18,6 +18,7 @@ import Profile from "@/pages/profile";
 import Auth from "@/pages/auth";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminMangaList from "@/pages/admin/manga-list";
+import { ProtectedRoute } from "./components/protected-route";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -37,9 +38,18 @@ function Router() {
       <Route path="/latest" component={Latest} />
       <Route path="/genres" component={Genres} />
       <Route path="/auth" component={Auth} />
-      <Route path="/profile" component={Profile} />
+      <Route path="/profile">
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      </Route>
+      
       <Route path="/manga/:id" component={MangaDetails} />
-      <Route path="/read/:mangaId/:chapterId" component={Reader} />
+      <Route path="/read/:mangaId/:chapterId">
+        <ProtectedRoute>
+          <Reader />
+        </ProtectedRoute>
+      </Route>
       
       {/* Admin Routes */}
       {/* <Route path="/admin" component={AdminDashboard} />

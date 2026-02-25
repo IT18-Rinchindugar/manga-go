@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import MangaCard from "@/components/manga-card";
 import { Coins, Settings, History, Heart, LogOut } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth } from "@/context/auth-context";
 
 export default function Profile() {
+  const { user } = useAuth();
   const favorites = MOCK_MANGA.filter(m => MOCK_USER.favorites.includes(m.id));
   
   const history = MOCK_USER.history.map(h => {
