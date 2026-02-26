@@ -13,10 +13,12 @@ import { useAuth } from '@/context/auth-context';
 import { useLoginModal } from '@/hooks/use-login-modal';
 import { toast } from 'sonner';
 import type { PBSubscriptionPlan, PBSubscription, PBSubscriptionExpanded } from '@/lib/pocketbase-types';
+import { useUser } from '@/context/user-context';
 
 export default function Subscription() {
   const { t } = useTranslation();
   const { user, refetchUser } = useAuth();
+  const { hasSubscriptionAccess, subscription } = useUser();
   const { openLoginModal } = useLoginModal();
   const queryClient = useQueryClient();
   const [selectedPlan, setSelectedPlan] = useState<PBSubscriptionPlan | null>(null);
@@ -29,13 +31,6 @@ export default function Subscription() {
   const { data: plans = [], isLoading: plansLoading } = useQuery({
     queryKey: ['subscription-plans'],
     queryFn: () => subscriptionApi.getActiveSubscriptionPlans(),
-  });
-
-  // Fetch user's active subscription
-  const { data: userSubscription, isLoading: subscriptionLoading } = useQuery({
-    queryKey: ['user-subscription'],
-    queryFn: () => subscriptionApi.getUserActiveSubscription(),
-    enabled: !!user,
   });
 
   // Create subscription mutation
@@ -58,7 +53,7 @@ export default function Subscription() {
     }
 
     // Check if user already has an active subscription
-    if (userSubscription && userSubscription.status === 'active') {
+    if (hasSubscriptionAccess()) {
       toast.error(t('subscription.messages.alreadySubscribed'));
       return;
     }
@@ -73,20 +68,21 @@ export default function Subscription() {
     setIsVerifying(true);
     try {
       await subscriptionApi.verifyPayment(pendingSubscription.id);
-      setIsSuccess(true);
-      toast.success(t('subscription.messages.paymentVerified'));
+      console.log('Payment verified successfully');
+      // setIsSuccess(true);
+      // toast.success(t('subscription.messages.paymentVerified'));
       
-      // Refetch data
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      refetchUser();
+      // // Refetch data
+      // queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
+      // refetchUser();
 
-      // Wait a bit before resetting
-      setTimeout(() => {
-        setShowPayment(false);
-        setSelectedPlan(null);
-        setPendingSubscription(null);
-        setIsSuccess(false);
-      }, 2000);
+      // // Wait a bit before resetting
+      // setTimeout(() => {
+      //   setShowPayment(false);
+      //   setSelectedPlan(null);
+      //   setPendingSubscription(null);
+      //   setIsSuccess(false);
+      // }, 2000);
     } catch (error: any) {
       console.error('Payment verification error:', error);
       toast.error(error.message || t('subscription.payment.failed'));
@@ -116,7 +112,7 @@ export default function Subscription() {
   };
 
   const isCurrentPlan = (planId: string) => {
-    return userSubscription && userSubscription?.subscriptionPlan === planId && userSubscription?.status === 'active';
+    return hasSubscriptionAccess() && subscription?.expand?.subscriptionPlan?.id === planId;
   };
 
   return (
@@ -154,7 +150,7 @@ export default function Subscription() {
                 </motion.div>
 
                 {/* Current Subscription Status */}
-                {user && userSubscription && userSubscription.status === 'active' && (
+                {user && hasSubscriptionAccess() && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -170,17 +166,17 @@ export default function Subscription() {
                             <div>
                               <p className="font-semibold">{t('subscription.currentPlan')}</p>
                               <p className="text-sm text-muted-foreground">
-                                {userSubscription.expand?.subscriptionPlan?.name || 'Premium'}
+                                {subscription?.expand?.subscriptionPlan?.name || 'Premium'}
                               </p>
                             </div>
                           </div>
-                          {userSubscription.end_date && (
+                          {subscription?.end_date && (
                             <div className="text-right">
                               <p className="text-sm text-muted-foreground">
                                 {t('subscription.messages.expiresOn')}
                               </p>
                               <p className="font-semibold">
-                                {new Date(userSubscription.end_date).toLocaleDateString()}
+                                {new Date(subscription?.end_date).toLocaleDateString()}
                               </p>
                             </div>
                           )}

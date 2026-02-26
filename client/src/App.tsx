@@ -21,6 +21,7 @@ import Subscription from "@/pages/subscription";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminMangaList from "@/pages/admin/manga-list";
 import { ProtectedRoute } from "./components/protected-route";
+import { UserProvider } from "./context/user-context";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -72,13 +73,15 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AuthProvider>
-          <LoginModalProvider>
-            <TooltipProvider>
-              <Toaster />
-              <ScrollToTop />
-              <Router />
-            </TooltipProvider>
-          </LoginModalProvider>
+          <UserProvider>
+            <LoginModalProvider>
+              <TooltipProvider>
+                <Toaster />
+                <ScrollToTop />
+                <Router />
+              </TooltipProvider>
+            </LoginModalProvider>
+          </UserProvider>
         </AuthProvider>
       </LanguageProvider>
     </QueryClientProvider>

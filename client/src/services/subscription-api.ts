@@ -183,7 +183,7 @@ class SubscriptionApiService {
       }
 
       // Check if already active
-      if (subscription.status === 'active') {
+      if (subscription.status === 'active' && subscription.end_date && new Date(subscription.end_date) > new Date()) {
         throw new Error('Subscription is already active');
       }
 
@@ -191,15 +191,15 @@ class SubscriptionApiService {
       const plan = await this.getSubscriptionPlanById(subscription.subscriptionPlan);
 
       // Calculate dates
-      const startDate = new Date().toISOString();
-      const expiryDate = new Date();
+      const startDate = new Date();
+      const expiryDate = new Date(startDate);
       expiryDate.setDate(expiryDate.getDate() + plan.durationDays);
 
       // Update subscription to active
       const updatedSubscription = await pb.collection('subscriptions').update<PBSubscription>(subscriptionId, {
         status: 'active',
-        startDate: startDate,
-        expiryDate: expiryDate.toISOString(),
+        start_date: startDate,
+        end_date: expiryDate.toISOString(),
       });
 
       // Update user's subscription status

@@ -193,7 +193,12 @@
       "q4": "What happens after my subscription expires?",
       "a4": "After expiration, you'll return to the free tier but keep access to previously unlocked chapters."
     },
-    "remainingDays":"Remaining Days"
+    "remainingDays":"Remaining Days",
+    "notification": {
+      "title": "Unlock Premium Content",
+      "description": "Get unlimited access to all premium chapters and exclusive content!",
+      "button": "View Subscription Plans"
+    }
   },
   "profile": {
     "mySubscription": "My Subscription",

@@ -72,12 +72,19 @@ export interface PBReadingHistory extends BaseRecord {
   manga: string; // Relation to manga collection
   chapter: string; // Relation to chapters collection
   lastRead: string;
+  expand?: {
+    manga?: PBManga;
+    chapter?: PBChapter;
+  };
 }
 
 // Favorite record in PocketBase
 export interface PBFavorite extends BaseRecord {
   user: string; // Relation to users collection
   manga: string; // Relation to manga collection
+  expand?: {
+    manga?: PBManga;
+  };
 }
 
 // Unlocked Chapter record in PocketBase

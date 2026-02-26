@@ -13,9 +13,12 @@ import { useAuth } from "@/context/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { subscriptionApi } from "@/services/subscription-api";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/context/user-context";
 
 export default function Profile() {
   const { user } = useAuth();
+  const { hasSubscriptionAccess, subscription, isLoadingSubscription } = useUser();
+  const subscriptionAccess = hasSubscriptionAccess();
   const { t } = useTranslation();
   const favorites = MOCK_MANGA.filter(m => MOCK_USER.favorites.includes(m.id));
   
@@ -25,12 +28,6 @@ export default function Profile() {
     return { ...h, manga, chapter };
   }).filter(h => h.manga && h.chapter);
 
-  // Fetch user's subscription
-  const { data: userSubscription } = useQuery({
-    queryKey: ['user-subscription'],
-    queryFn: () => subscriptionApi.getUserActiveSubscription(),
-    enabled: !!user,
-  });
 
   const getSubscriptionStatusColor = (status?: string) => {
     switch (status) {
@@ -84,29 +81,29 @@ export default function Profile() {
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <Crown className="h-5 w-5 text-primary" />
-                          <span className="font-semibold">{userSubscription?.status !== 'active' ? t('subscription.title') : 'Гишүүнчлэл'}</span>
+                          <span className="font-semibold">{subscriptionAccess ? t('subscription.title') : 'Гишүүнчлэл'}</span>
                         </div>
-                        <Badge className={getSubscriptionStatusColor(userSubscription?.status || 'free')}>
-                          {t(`subscription.status.${userSubscription?.status || 'free'}`)}
+                        <Badge className={getSubscriptionStatusColor(subscription?.status || 'free')}>
+                          {t(`subscription.status.${subscription?.status || 'free'}`)}
                         </Badge>
                       </div>
                       
-                      {userSubscription ? (
+                      {subscriptionAccess ? (
                         <div className="space-y-2">
                           <div className="text-sm">
                             <span className="text-muted-foreground">{t('subscription.currentPlan')}: </span>
-                            <span className="font-semibold">{userSubscription.expand?.subscriptionPlan?.name || 'Premium'}</span>
+                            <span className="font-semibold">{subscription?.expand?.subscriptionPlan?.name || 'Premium'}</span>
                           </div>
-                          {userSubscription.end_date && (
+                          {subscription?.end_date && (
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <Calendar className="h-3 w-3" />
-                              <span>{t('subscription.messages.expiresOn')}: {new Date(userSubscription?.end_date).toLocaleDateString()}</span>
+                              <span>{t('subscription.messages.expiresOn')}: {new Date(subscription?.end_date).toLocaleDateString()}</span>
                             </div>
                           )}
         
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Clock className="h-3 w-3" />
-                            <span>{t('subscription.remainingDays')}: {calculateRemainingDays(userSubscription?.end_date)}</span>
+                            <span>{t('subscription.remainingDays')}: {calculateRemainingDays(subscription?.end_date)}</span>
                           </div>
 
                           {/* <Link href="/subscription">

@@ -13,11 +13,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/auth-context";
 import { useLoginModal } from "@/hooks/use-login-modal";
+import { useUser } from "@/context/user-context";
+import { toast } from "sonner";
+import { navigate } from "wouter/use-browser-location";
+import { useSubscriptionModal } from "@/context/login-modal-context";
 
 export default function MangaDetails() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { isOpen, openLoginModal, closeLoginModal } = useLoginModal();
+  const { hasSubscriptionAccess } = useUser();
+  const { openSubscriptionModal } = useSubscriptionModal();
   const [match, params] = useRoute("/manga/:id");
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -176,6 +182,15 @@ export default function MangaDetails() {
                           e.preventDefault();
                           openLoginModal();
                         }
+
+                        if (!chapter.isFree && !hasSubscriptionAccess()) {
+                          e.preventDefault();
+                          openSubscriptionModal();
+                          return;
+                        }
+
+                        navigate(`/read/${manga.id}/${chapter.id}`);
+                        return;
                       }}
                       className={`flex items-center justify-between p-4 hover:bg-white/5 transition-colors group ${!chapter.isFree ? 'opacity-70' : ''}`}
                     >
