@@ -17,6 +17,7 @@ import Latest from "@/pages/latest";
 import Genres from "@/pages/genres";
 import Profile from "@/pages/profile";
 import Auth from "@/pages/auth";
+import Subscription from "@/pages/subscription";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminMangaList from "@/pages/admin/manga-list";
 import { ProtectedRoute } from "./components/protected-route";
@@ -42,6 +43,11 @@ function Router() {
       <Route path="/profile">
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/subscription">
+        <ProtectedRoute>
+          <Subscription />
         </ProtectedRoute>
       </Route>
       

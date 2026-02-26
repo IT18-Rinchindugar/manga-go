@@ -1,6 +1,7 @@
 export type UserRole = 'USER' | 'ADMIN';
 export type MangaStatus = 'Ongoing' | 'Completed' | 'Hiatus';
 export type TransactionType = 'COIN_PURCHASE' | 'CHAPTER_UNLOCK';
+export type SubscriptionStatus = 'free' | 'active' | 'expired' | 'cancelled' | 'pending';
 
 export interface User {
   id: string;
@@ -72,4 +73,38 @@ export interface UnlockedChapter {
   userId: string;
   chapterId: string;
   unlockedAt: Date;
+}
+
+// Subscription Plan
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  sequence: number;
+  price: number;
+  discount?: number;
+  discountTitle?: string;
+  durationDays: number;
+  isActive: boolean;
+  features?: string[];
+}
+
+// Subscription
+export interface Subscription {
+  id: string;
+  userId: string;
+  subscriptionPlanId: string;
+  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  qpayInvoiceId?: string;
+  qpayQRImage?: string;
+  amount: number;
+  startDate?: Date;
+  expiryDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface QPayVerificationResult {
+  success: boolean;
+  message: string;
+  subscription?: Subscription;
 }

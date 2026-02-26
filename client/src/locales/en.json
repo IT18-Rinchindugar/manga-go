@@ -39,7 +39,8 @@
     "topUpCoins": "Top Up Coins",
     "settings": "Settings",
     "accountSettings": "Account Settings",
-    "toggleMenu": "Toggle menu"
+    "toggleMenu": "Toggle menu",
+    "subscription": "Subscription"
   },
   "manga": {
     "popularThisWeek": "Popular This Week",
@@ -128,6 +129,75 @@
     "bonusCoins": "Bonus Coins",
     "bestValue": "Best Value",
     "securePayment": "Secure payment processed by Stripe (Mock)"
+  },
+  "subscription": {
+    "title": "Choose Your Plan",
+    "subtitle": "Unlock unlimited manga reading with our premium subscription",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "yearly": "Yearly",
+    "currentPlan": "Current Plan",
+    "subscribe": "Subscribe Now",
+    "subscribing": "Processing...",
+    "cancel": "Cancel Subscription",
+    "manage": "Manage Subscription",
+    "perMonth": "per month",
+    "perQuarter": "per quarter",
+    "perYear": "per year",
+    "popularPlan": "Most Popular",
+    "bestValue": "Best Value",
+    "status": {
+      "free": "Free",
+      "active": "Active",
+      "expired": "Expired",
+      "pending": "Pending Payment",
+      "cancelled": "Cancelled"
+    },
+    "benefits": {
+      "unlimitedReading": "Unlimited manga reading",
+      "adFree": "Ad-free experience",
+      "earlyAccess": "Early access to new chapters",
+      "hdQuality": "HD image quality",
+      "exclusiveContent": "Exclusive content",
+      "prioritySupport": "Priority support"
+    },
+    "payment": {
+      "title": "Complete Your Payment",
+      "scanQR": "Scan QR code with QPay app",
+      "waiting": "Waiting for payment...",
+      "verifyButton": "Verify Payment",
+      "verifying": "Verifying...",
+      "success": "Payment successful!",
+      "failed": "Payment verification failed",
+      "instructions": "1. Open QPay app\n2. Scan the QR code\n3. Complete the payment\n4. Click 'Verify Payment' button",
+      "amount": "Amount",
+      "invoiceId": "Invoice ID"
+    },
+    "messages": {
+      "subscriptionCreated": "Subscription created successfully!",
+      "paymentVerified": "Payment verified! Your subscription is now active.",
+      "subscriptionCancelled": "Subscription cancelled successfully",
+      "alreadySubscribed": "You already have an active subscription",
+      "mustLogin": "Please sign in to subscribe",
+      "expiresOn": "Expires on",
+      "renewsOn": "Renews on"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "Can I cancel anytime?",
+      "a1": "Yes, you can cancel your subscription at any time from your profile page.",
+      "q2": "What payment methods do you accept?",
+      "a2": "We accept QPay for secure and convenient payments.",
+      "q3": "Will I be charged automatically?",
+      "a3": "No, subscriptions do not auto-renew. You'll need to manually renew when it expires.",
+      "q4": "What happens after my subscription expires?",
+      "a4": "After expiration, you'll return to the free tier but keep access to previously unlocked chapters."
+    },
+    "remainingDays":"Remaining Days"
+  },
+  "profile": {
+    "mySubscription": "My Subscription",
+    "remainingDays": "Remaining Days"
   },
   "admin": {
     "dashboard": "Dashboard",

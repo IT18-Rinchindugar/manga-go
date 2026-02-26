@@ -13,6 +13,7 @@ export interface BaseRecord {
 export type UserRole = 'USER' | 'ADMIN';
 export type MangaStatus = 'Ongoing' | 'Completed' | 'Hiatus';
 export type TransactionType = 'COIN_PURCHASE' | 'CHAPTER_UNLOCK';
+export type SubscriptionStatus = 'free' | 'active' | 'expired' | 'cancelled' | 'pending';
 
 // PocketBase Auth User (extends built-in users collection)
 export interface PBUser extends BaseRecord {
@@ -24,6 +25,8 @@ export interface PBUser extends BaseRecord {
   coins: number;
   verified: boolean;
   emailVisibility?: boolean;
+  subscription_status?: string;
+  subscription_expiry?: string;
 }
 
 // Manga record in PocketBase
@@ -82,6 +85,37 @@ export interface PBUnlockedChapter extends BaseRecord {
   user: string; // Relation to users collection
   chapter: string; // Relation to chapters collection
   unlockedAt: string;
+}
+
+// Subscription Plan record in PocketBase
+export interface PBSubscriptionPlan extends BaseRecord {
+  name: string;
+  sequence: number;
+  price: number;
+  discount?: number;
+  discountTitle?: string;
+  durationDays: number;
+  isActive: boolean;
+  features?: string[]; // JSON array
+}
+
+// Subscription record in PocketBase
+export interface PBSubscription extends BaseRecord {
+  user: string; // Relation to users collection
+  subscriptionPlan: string; // Relation to subscription_plans collection
+  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  qpayInvoiceId?: string;
+  qpayQRImage?: string;
+  amount: number;
+  start_date?: string;
+  end_date?: string;
+}
+
+// Expanded subscription with plan details
+export interface PBSubscriptionExpanded extends PBSubscription {
+  expand?: {
+    subscriptionPlan?: PBSubscriptionPlan;
+  };
 }
 
 // Legacy types for backward compatibility (will be migrated)
@@ -166,6 +200,8 @@ export interface PBCollections {
   reading_history: PBReadingHistory;
   favorites: PBFavorite;
   unlocked_chapters: PBUnlockedChapter;
+  subscription_plans: PBSubscriptionPlan;
+  subscriptions: PBSubscription;
 }
 
 // OAuth2 Provider types

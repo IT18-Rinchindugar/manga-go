@@ -1,10 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { Search, User, Coins, Menu, X, Plus } from "lucide-react";
+import { Search, User, Coins, Menu, X, Plus, Crown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,15 +15,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/auth-context";
-import { useLanguage } from "@/context/language-context";
 import LanguageSwitcher from "@/components/language-switcher";
 import PaymentModal from "./payment-modal";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const { user, logout } = useAuth();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -53,6 +54,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {/* <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>{t('common.home')}</a></Link> */}
               <Link href="/browse"><a className={`hover:text-primary transition-colors ${location === '/browse' ? 'text-primary' : ''}`}>{t('common.browse')}</a></Link>
               <Link href="/genres"><a className="hover:text-primary transition-colors">{t('common.genres')}</a></Link>
+              {/* <Link href="/subscription">
+                <a className={`hover:text-primary transition-colors flex items-center gap-1.5 ${location === '/subscription' ? 'text-primary' : ''}`}>
+                  <Crown className="h-4 w-4" />
+                  {t('navigation.subscription')}
+                </a>
+              </Link> */}
             </nav>
           </div>
 
@@ -71,6 +78,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <LanguageSwitcher />
             {user ? (
               <>
+                {/* Subscription Status Badge */}
+                {user.subscription_status === 'active' && (
+                  <Link href="/subscription">
+                    <Badge 
+                      variant="default" 
+                      className="hidden sm:flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+                    >
+                      <Crown className="h-3 w-3" />
+                      Premium
+                    </Badge>
+                  </Link>
+                )}
                 <button 
                   onClick={() => setIsPaymentOpen(true)}
                   className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 transition-colors rounded-full text-primary font-medium text-sm border border-primary/20 cursor-pointer"
@@ -101,6 +120,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <DropdownMenuSeparator />
                     <Link href="/profile">
                        <DropdownMenuItem className="cursor-pointer" data-testid="link-profile">{t('common.profile')}</DropdownMenuItem>
+                    </Link>
+                    <Link href="/profile">
+                      <DropdownMenuItem className="cursor-pointer" data-testid="link-subscription">
+                        <Crown className="mr-2 h-4 w-4" /> 
+                        {t('profile.mySubscription')}
+                      </DropdownMenuItem>
                     </Link>
                     {user.role === 'ADMIN' && (
                       <Link href="/admin">
@@ -139,6 +164,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Link href="/browse"><a className="text-lg font-medium hover:text-primary text-zinc-100">{t('common.browse')}</a></Link>
                   <Link href="/latest"><a className="text-lg font-medium hover:text-primary text-zinc-100">{t('common.latest')}</a></Link>
                   <Link href="/genres"><a className="text-lg font-medium hover:text-primary text-zinc-100">{t('common.genres')}</a></Link>
+                  {/* <Link href="/subscription">
+                    <a className="text-lg font-medium hover:text-primary text-zinc-100 flex items-center gap-2">
+                      <Crown className="h-5 w-5" />
+                      {t('navigation.subscription')}
+                    </a>
+                  </Link> */}
                   {!user && (
                     <Link href="/auth">
                       <Button className="mt-4 w-full">{t('common.signIn')}</Button>
