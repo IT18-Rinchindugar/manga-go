@@ -181,6 +181,7 @@ export default function MangaDetails() {
                         if (!chapter.isFree && !user) {
                           e.preventDefault();
                           openLoginModal();
+                          return;
                         }
 
                         if (!chapter.isFree && !hasSubscriptionAccess()) {
