@@ -48,5 +48,14 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    proxy: {
+      // Proxy payment API requests through Vite server
+      '/api/payment': {
+        target: process.env.VITE_PAYMENT_ENDPOINT_URL || 'https://payment.neotoon.art',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/payment/, '/api'),
+        secure: false,
+      },
+    },
   },
 });

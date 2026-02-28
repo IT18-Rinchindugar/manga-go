@@ -102,7 +102,7 @@ You need to manually create these collections in PocketBase Admin UI:
 
 **Added Translations:**
 - `subscription.*` - All subscription-related strings
-- `subscription.status.*` - Status labels (free, active, expired, pending, cancelled)
+- `subscription.status.*` - Status labels (FREE, ACTIVE, PAID, PENDING)
 - `subscription.benefits.*` - Feature benefits
 - `subscription.payment.*` - Payment modal strings
 - `subscription.messages.*` - Success/error messages
@@ -177,7 +177,7 @@ You need to manually create these collections in PocketBase Admin UI:
 
 2. **Clicks "Subscribe Now"**
    - If not logged in → redirects to login
-   - If logged in → creates pending subscription
+   - If logged in → creates PENDING subscription
 
 3. **QPay Modal Opens**
    - Shows mock QR code

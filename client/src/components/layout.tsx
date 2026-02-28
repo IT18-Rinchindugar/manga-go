@@ -79,7 +79,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {user ? (
               <>
                 {/* Subscription Status Badge */}
-                {user.subscription_status === 'active' && (
+                {user.subscription_status === 'ACTIVE' && (
                   <Link href="/subscription">
                     <Badge 
                       variant="default" 

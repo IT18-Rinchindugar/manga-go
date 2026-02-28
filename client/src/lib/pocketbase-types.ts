@@ -13,7 +13,7 @@ export interface BaseRecord {
 export type UserRole = 'USER' | 'ADMIN';
 export type MangaStatus = 'Ongoing' | 'Completed' | 'Hiatus';
 export type TransactionType = 'COIN_PURCHASE' | 'CHAPTER_UNLOCK';
-export type SubscriptionStatus = 'free' | 'active' | 'expired' | 'cancelled' | 'pending';
+export type SubscriptionStatus = 'FREE' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'PENDING';
 
 // PocketBase Auth User (extends built-in users collection)
 export interface PBUser extends BaseRecord {
@@ -110,12 +110,40 @@ export interface PBSubscriptionPlan extends BaseRecord {
 export interface PBSubscription extends BaseRecord {
   user: string; // Relation to users collection
   subscriptionPlan: string; // Relation to subscription_plans collection
-  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  status: 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
   qpayInvoiceId?: string;
   qpayQRImage?: string;
   amount: number;
   start_date?: string;
   end_date?: string;
+}
+
+export interface PBInvoice extends BaseRecord {
+  invoiceNo: string;
+  providerInvoiceNo: string;
+  user?: string;
+  subscriptionPlan?: string;
+  mangaId?: string;
+  chapterId?: string;
+  amount: number;
+  status: 'PENDING' | 'PAID' | 'FAILED';
+  qrText?: string;
+  qrImage?: string;
+  qPay_shortUrl?: string;
+  urls?: Array<{
+    name: string;
+    description: string;
+    logo: string;
+    link: string;
+  }>;
+  providerResponse?: string;
+  invoice_id?: string;
+  qr_text?: string;
+  qr_image?: string;
+}
+
+export interface PBSubscriptionWithInvoice extends PBSubscription {
+  invoice: PBInvoice;
 }
 
 // Expanded subscription with plan details

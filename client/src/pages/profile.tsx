@@ -31,13 +31,13 @@ export default function Profile() {
 
   const getSubscriptionStatusColor = (status?: string) => {
     switch (status) {
-      case 'active':
+      case 'ACTIVE':
         return 'bg-green-500/10 text-green-500 border-green-500/20';
-      case 'expired':
+      case 'EXPIRED':
         return 'bg-red-500/10 text-red-500 border-red-500/20';
-      case 'cancelled':
+      case 'CANCELLED':
         return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
-      case 'pending':
+      case 'PENDING':
         return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
       default:
         return 'bg-muted text-muted-foreground border-muted';
@@ -84,7 +84,7 @@ export default function Profile() {
                           <span className="font-semibold">{subscriptionAccess ? t('subscription.title') : 'Гишүүнчлэл'}</span>
                         </div>
                         <Badge className={getSubscriptionStatusColor(subscription?.status || 'free')}>
-                          {t(`subscription.status.${subscription?.status || 'free'}`)}
+                          {t(`subscription.status.${subscription?.status?.toLowerCase() || 'free'}`)}
                         </Badge>
                       </div>
                       

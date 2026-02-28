@@ -150,7 +150,7 @@
       "free": "Free",
       "active": "Active",
       "expired": "Expired",
-      "pending": "Pending Payment",
+      "PENDING": "Pending Payment",
       "cancelled": "Cancelled"
     },
     "benefits": {
@@ -163,6 +163,7 @@
     },
     "payment": {
       "title": "Complete Your Payment",
+      "bankApps": "Pay with bank apps",
       "scanQR": "Scan QR code with QPay app",
       "waiting": "Waiting for payment...",
       "verifyButton": "Verify Payment",

@@ -50,7 +50,7 @@ class SubscriptionApiService {
       }
 
       const records = await pb.collection('subscriptions').getList<PBSubscription>(1, 1, {
-        filter: `user = "${userId}" && status = "active"`,
+        filter: `user = "${userId}" && status = "ACTIVE"`,
         sort: '-updated',
         expand: 'subscriptionPlan',
       });
@@ -141,11 +141,11 @@ class SubscriptionApiService {
       // Generate mock QR code
       const qrImage = this.generateMockQRCode(invoiceId, finalAmount);
 
-      // Create subscription record with pending status
+      // Create subscription record with PENDING status
       const data = {
         user: userId,
         subscriptionPlan: planId,
-        status: 'pending' as const,
+        status: 'PENDING' as const,
         qpayInvoiceId: invoiceId,
         qpayQRImage: qrImage,
         amount: finalAmount,
@@ -165,50 +165,13 @@ class SubscriptionApiService {
    * Verify payment (mock implementation)
    * In production, this would verify with QPay webhook or API
    */
-  async verifyPayment(subscriptionId: string): Promise<PBSubscription> {
+  async verifyPayment(invoiceId: string): Promise<void> {
     try {
       const userId = pb.authStore.model?.id;
       if (!userId) {
         throw new Error('User not authenticated');
       }
 
-      // Get the subscription
-      const subscription = await pb.collection('subscriptions').getOne<PBSubscription>(subscriptionId, {
-        expand: 'subscriptionPlan',
-      });
-
-      // Verify ownership
-      if (subscription.user !== userId) {
-        throw new Error('Unauthorized');
-      }
-
-      // Check if already active
-      if (subscription.status === 'active' && subscription.end_date && new Date(subscription.end_date) > new Date()) {
-        throw new Error('Subscription is already active');
-      }
-
-      // Get plan details
-      const plan = await this.getSubscriptionPlanById(subscription.subscriptionPlan);
-
-      // Calculate dates
-      const startDate = new Date();
-      const expiryDate = new Date(startDate);
-      expiryDate.setDate(expiryDate.getDate() + plan.durationDays);
-
-      // Update subscription to active
-      const updatedSubscription = await pb.collection('subscriptions').update<PBSubscription>(subscriptionId, {
-        status: 'active',
-        start_date: startDate,
-        end_date: expiryDate.toISOString(),
-      });
-
-      // Update user's subscription status
-      await pb.collection('users').update(userId, {
-        subscription_status: 'active',
-        subscription_expiry: expiryDate.toISOString(),
-      });
-
-      return updatedSubscription;
     } catch (error) {
       console.error('Error verifying payment:', error);
       throw error;
@@ -235,12 +198,12 @@ class SubscriptionApiService {
 
       // Update subscription status
       const updatedSubscription = await pb.collection('subscriptions').update<PBSubscription>(subscriptionId, {
-        status: 'cancelled',
+        status: 'CANCELLED',
       });
 
       // Update user's subscription status
       await pb.collection('users').update(userId, {
-        subscription_status: 'cancelled',
+        subscription_status: 'CANCELLED',
       });
 
       return updatedSubscription;
@@ -263,7 +226,7 @@ class SubscriptionApiService {
 
       const user = pb.authStore.model;
       
-      if (user?.subscription_status === 'active' && user?.subscription_expiry) {
+      if (user?.subscription_status === 'ACTIVE' && user?.subscription_expiry) {
         const expiryDate = new Date(user.subscription_expiry);
         const now = new Date();
         
@@ -275,7 +238,7 @@ class SubscriptionApiService {
 
           // Update subscription record
           const subscriptions = await pb.collection('subscriptions').getList<PBSubscription>(1, 1, {
-            filter: `user = "${userId}" && status = "active"`,
+            filter: `user = "${userId}" && status = "ACTIVE"`,
             sort: '-created',
           });
 

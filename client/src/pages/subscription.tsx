@@ -12,17 +12,19 @@ import { subscriptionApi } from '@/services/subscription-api';
 import { useAuth } from '@/context/auth-context';
 import { useLoginModal } from '@/hooks/use-login-modal';
 import { toast } from 'sonner';
-import type { PBSubscriptionPlan, PBSubscription, PBSubscriptionExpanded } from '@/lib/pocketbase-types';
+import type { PBSubscriptionPlan, PBSubscription, PBSubscriptionExpanded, PBSubscriptionWithInvoice } from '@/lib/pocketbase-types';
 import { useUser } from '@/context/user-context';
+import { paymentApi } from '@/services/payment-api';
 
 export default function Subscription() {
   const { t } = useTranslation();
-  const { user, refetchUser } = useAuth();
+  const { user } = useAuth();
+  const { refreshSubscription } = useUser();
   const { hasSubscriptionAccess, subscription } = useUser();
   const { openLoginModal } = useLoginModal();
   const queryClient = useQueryClient();
   const [selectedPlan, setSelectedPlan] = useState<PBSubscriptionPlan | null>(null);
-  const [pendingSubscription, setPendingSubscription] = useState<PBSubscription | null>(null);
+  const [pendingSubscription, setPendingSubscription] = useState<PBSubscriptionWithInvoice | null>(null);
   const [showPayment, setShowPayment] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -35,8 +37,9 @@ export default function Subscription() {
 
   // Create subscription mutation
   const createSubscriptionMutation = useMutation({
-    mutationFn: (planId: string) => subscriptionApi.createSubscription(planId),
+    mutationFn: (planId: string) => paymentApi.createSubscription(planId),
     onSuccess: (data) => {
+      console.log("data", data)
       setPendingSubscription(data);
       setShowPayment(true);
       toast.success(t('subscription.messages.subscriptionCreated'));
@@ -67,22 +70,16 @@ export default function Subscription() {
 
     setIsVerifying(true);
     try {
-      await subscriptionApi.verifyPayment(pendingSubscription.id);
-      console.log('Payment verified successfully');
-      // setIsSuccess(true);
-      // toast.success(t('subscription.messages.paymentVerified'));
-      
-      // // Refetch data
-      // queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      // refetchUser();
+      const data: any = await paymentApi.verifyPayment(pendingSubscription?.invoice.invoiceNo);
 
-      // // Wait a bit before resetting
-      // setTimeout(() => {
-      //   setShowPayment(false);
-      //   setSelectedPlan(null);
-      //   setPendingSubscription(null);
-      //   setIsSuccess(false);
-      // }, 2000);
+      if (data.status === 'PAID') {
+        await refreshSubscription();
+        toast.success(t('subscription.messages.paymentVerified'));
+        setIsSuccess(true);
+      } else {
+        toast.error(t('subscription.payment.failed'));
+        setIsSuccess(false);
+      }
     } catch (error: any) {
       console.error('Payment verification error:', error);
       toast.error(error.message || t('subscription.payment.failed'));
@@ -418,7 +415,7 @@ export default function Subscription() {
                         <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">{t('subscription.payment.amount')}:</span>
                           <span className="text-2xl font-bold">
-                            {pendingSubscription?.amount.toLocaleString()}₮
+                            {pendingSubscription?.invoice?.amount.toLocaleString()}₮
                           </span>
                         </div>
                       </div>
@@ -443,9 +440,9 @@ export default function Subscription() {
 
                       {/* QR Code */}
                       <div className="flex flex-col items-center justify-center p-6 bg-white rounded-lg">
-                        {pendingSubscription?.qpayQRImage ? (
+                        {pendingSubscription?.invoice?.qrImage ? (
                           <img 
-                            src={pendingSubscription.qpayQRImage} 
+                            src={`data:image/png;base64,${pendingSubscription.invoice.qrImage}`} 
                             alt="QPay QR Code" 
                             className="w-full max-w-[240px] h-auto"
                           />
@@ -457,8 +454,39 @@ export default function Subscription() {
                         )}
                       </div>
 
+                      {/* Payment Apps */}
+                      {pendingSubscription?.invoice?.urls && pendingSubscription.invoice.urls.length > 0 && (
+                        <div className="space-y-3">
+                          <p className="text-sm font-semibold text-center">
+                            {t('subscription.payment.bankApps')}
+                          </p>
+                          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+                            {pendingSubscription.invoice.urls.map((app, index) => (
+                              <a
+                                key={index}
+                                href={app.link}
+                                target="_blank"
+                                className="flex flex-col items-center justify-center gap-2 p-2 rounded-lg hover:bg-primary/5 transition-colors group"
+                                title={app.description}
+                              >
+                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-white shadow-sm group-hover:shadow-md transition-shadow">
+                                  <img 
+                                    src={app.logo} 
+                                    alt={app.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <span className="text-[10px] text-center text-muted-foreground line-clamp-2 max-w-[60px]">
+                                  {app.name}
+                                </span>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Instructions */}
-                      <div className="space-y-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                      {/* <div className="space-y-3 p-4 bg-primary/5 border border-primary/20 rounded-lg">
                         <p className="text-sm font-semibold text-primary">
                           {t('subscription.payment.scanQR')}
                         </p>
@@ -468,15 +496,14 @@ export default function Subscription() {
                           <li>Complete the payment</li>
                           <li>Click 'Verify Payment' button below</li>
                         </ol>
-                      </div>
+                      </div> */}
 
                       {/* Status */}
-                      {!isVerifying && (
-                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                           <div className="animate-pulse h-2 w-2 bg-primary rounded-full"></div>
-                          {t('subscription.payment.waiting')}
+                          {!isVerifying && t('subscription.payment.waiting')}
+                          {isVerifying && t('subscription.payment.verifying')}
                         </div>
-                      )}
 
                       {/* Verify Button */}
                       <Button
@@ -494,11 +521,6 @@ export default function Subscription() {
                           t('subscription.payment.verifyButton')
                         )}
                       </Button>
-
-                      {/* Note */}
-                      <div className="text-center text-xs text-muted-foreground pt-4 border-t border-white/10">
-                        This is a mock implementation for testing purposes
-                      </div>
                     </>
                   )}
                 </CardContent>

@@ -285,7 +285,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     if (unlockedChapters.has(chapter.id)) return true;
     
     // Check subscription access
-    if (subscription && subscription?.status === 'active') {
+    if (subscription && subscription?.status === 'ACTIVE') {
       return true;
     }
     
@@ -335,7 +335,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   // Check if user has active subscription
   const hasSubscriptionAccess = (feature?: string): boolean => {
-    const isActive = subscription && subscription.status === 'active' && new Date(subscription?.end_date || '') > new Date();
+    const isActive = subscription && subscription.status === 'ACTIVE' && new Date(subscription?.end_date || '') > new Date();
     if (!isActive) return false;
     
     return true;

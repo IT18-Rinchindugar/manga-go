@@ -128,7 +128,7 @@ export function QPayModal({ isOpen, onClose, subscription, plan, onSuccess }: QP
               </div>
 
               {/* Status */}
-              {subscription.status === 'pending' && !isVerifying && (
+              {subscription.status === 'PENDING' && !isVerifying && (
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <div className="animate-pulse h-2 w-2 bg-primary rounded-full"></div>
                   {t('subscription.payment.waiting')}

@@ -32,7 +32,7 @@ Create a new collection named `subscriptions`:
 **Fields:**
 - `user` (Relation, Required) - Single relation to `users` collection
 - `subscriptionPlan` (Relation, Required) - Single relation to `subscription_plans` collection
-- `status` (Select, Required) - Options: "pending", "active", "expired", "cancelled"
+- `status` (Select, Required) - Options: "PENDING", "ACTIVE", "EXPIRED", "CANCELLED"
 - `qpayInvoiceId` (Text, Optional) - Mock QPay invoice ID
 - `qpayQRImage` (Text, Optional) - Mock QR code data (base64 or URL)
 - `amount` (Number, Required) - Final amount paid
@@ -123,7 +123,7 @@ curl -X POST http://127.0.0.1:8090/api/collections/subscriptions/records \
   -d '{
     "user": "USER_ID",
     "subscriptionPlan": "PLAN_ID",
-    "status": "pending",
+    "status": "PENDING",
     "amount": 19900
   }'
 ```

@@ -8,7 +8,7 @@ async function startServer() {
     },
     configFile: "./vite.config.ts",
   });
-
+  
   await vite.listen();
   console.log("Vite dev server running on http://0.0.0.0:5000");
 }
