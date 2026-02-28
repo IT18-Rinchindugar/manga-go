@@ -12,8 +12,6 @@ const PAYMENT_API_BASE = import.meta.env.DEV
   ? '/api/payment'  // Proxy through Vite server (hides actual endpoint)
   : import.meta.env.VITE_PAYMENT_ENDPOINT_URL || 'http://localhost:3000';
 
-console.log('PAYMENT_API_BASE', PAYMENT_API_BASE)
-
 class PaymentApiService {
 
   async createSubscription(planId: string): Promise<PBSubscriptionWithInvoice> {
