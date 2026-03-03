@@ -38,7 +38,7 @@
 
 5. **Watch the magic happen!** ✨
    - Header navigation changes
-   - App name changes (MangaGo ↔ МангаГо)
+   - App name changes (Neotoon ↔ МангаГо)
    - Footer changes
    - Auth page (login/register) changes
    - All buttons and labels change
@@ -47,7 +47,7 @@
 
 ### ✅ Fully Working:
 - **Header/Navigation Bar**
-  - App name (MangaGo / МангаГо)
+  - App name (Neotoon / МангаГо)
   - Home, Browse, Latest, Genres links
   - Search placeholder
   - Language switcher (🌐)
@@ -126,7 +126,7 @@ See `TRANSLATION_CHEATSHEET.md` for the most common translation keys.
 
 ## 🎉 You're All Set!
 
-Your MangaGo app now supports both **English** and **Mongolian** languages!
+Your Neotoon app now supports both **English** and **Mongolian** languages!
 
 The header and auth page are already translated and working. You have 160+ translations ready to use anywhere in your app.
 

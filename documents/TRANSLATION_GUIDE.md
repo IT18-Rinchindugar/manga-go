@@ -1,4 +1,4 @@
-# MangaGo Translation System
+# Neotoon Translation System
 
 ## Overview
 This project now supports English and Mongolian (монгол хэл) translations using i18next.

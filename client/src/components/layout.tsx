@@ -46,9 +46,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/">
-              <a className="font-display text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
-                {t('appName')}
-              </a>
+            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <img src="/logo.png" alt={t('appName')} className="h-7.5 w-auto" />
+            </a>
             </Link>
             <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
               {/* <Link href="/"><a className={`hover:text-primary transition-colors ${location === '/' ? 'text-primary' : ''}`}>{t('common.home')}</a></Link> */}
@@ -75,7 +75,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <LanguageSwitcher />
+            {/* <LanguageSwitcher /> */}
             {user ? (
               <>
                 {/* Subscription Status Badge */}

@@ -51,7 +51,7 @@ export default defineConfig({
     proxy: {
       // Proxy payment API requests through Vite server
       '/api/payment': {
-        target: process.env.VITE_PAYMENT_ENDPOINT_URL || 'https://payment.neotoon.art',
+        target: process.env.VITE_PAYMENT_ENDPOINT_URL || 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/payment/, '/api'),
         secure: false,

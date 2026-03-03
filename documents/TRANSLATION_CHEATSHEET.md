@@ -82,6 +82,6 @@ notifications.*   // Toast messages
 errors.*          // Error pages (404, etc.)
 ui.*              // Misc UI elements
 footer.*          // Footer text
-appName           // App name (MangaGo / МангаГо)
+appName           // App name (Neotoon / МангаГо)
 ```
 

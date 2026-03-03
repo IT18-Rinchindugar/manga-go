@@ -1,4 +1,4 @@
-# MangaGo - Translation Setup Complete! 🎉
+# Neotoon - Translation Setup Complete! 🎉
 
 ## What Was Done
 
@@ -102,7 +102,7 @@ const { t } = useLanguage();
 
 ## App Name Changed
 - **Old**: InkFlow
-- **New**: MangaGo (МангаГо in Mongolian)
+- **New**: Neotoon (МангаГо in Mongolian)
 
 ## Files Added/Modified
 
