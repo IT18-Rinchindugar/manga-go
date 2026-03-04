@@ -21,11 +21,10 @@ import { useSubscriptionModal } from "@/context/login-modal-context";
 export default function MangaDetails() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { isOpen, openLoginModal, closeLoginModal } = useLoginModal();
-  const { hasSubscriptionAccess } = useUser();
+  const { openLoginModal } = useLoginModal();
+  const { hasSubscriptionAccess, isFavorite, addFavorite, removeFavorite, isLoadingFavorites } = useUser();
   const { openSubscriptionModal } = useSubscriptionModal();
   const [match, params] = useRoute("/manga/:id");
-  const [isFavorite, setIsFavorite] = useState(false);
 
   // Fetch manga details from PocketBase
   const { data: manga, isLoading: mangaLoading, error: mangaError } = useQuery({
@@ -50,6 +49,14 @@ export default function MangaDetails() {
         </div>
       </Layout>
     );
+  }
+
+  const handleFavorite = () => {
+    if (params?.id && !isFavorite(params?.id)) {
+      addFavorite(params?.id);
+    } else {
+      params?.id && removeFavorite(params?.id);
+    }
   }
 
   // Error or not found
@@ -81,18 +88,19 @@ export default function MangaDetails() {
               </Button>
               <div className="grid grid-cols-2 gap-2">
                 <Button 
-                  variant={isFavorite ? "default" : "secondary"} 
+                  disabled={isLoadingFavorites}
+                  variant={isFavorite(params?.id) ? "default" : "secondary"} 
                   className="w-full"
                   onClick={() => {
                     if (!user) {
                       openLoginModal();
                       return;
                     }
-                    setIsFavorite(!isFavorite);
+                    handleFavorite();
                   }}
                 >
-                  <Heart className={`mr-2 h-4 w-4 ${isFavorite ? "fill-current" : ""}`} /> 
-                  {isFavorite ? t('common.saved') : t('common.favorite')}
+                  <Heart className={`mr-2 h-4 w-4 ${isFavorite(params?.id) ? "fill-current" : ""}`} /> 
+                  {isFavorite(params?.id) ? t('common.saved') : t('common.favorite')}
                 </Button>
                 <Button variant="outline" className="w-full">
                   <Share2 className="mr-2 h-4 w-4" />

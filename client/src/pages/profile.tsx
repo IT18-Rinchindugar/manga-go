@@ -17,16 +17,9 @@ import { useUser } from "@/context/user-context";
 
 export default function Profile() {
   const { user } = useAuth();
-  const { hasSubscriptionAccess, subscription, isLoadingSubscription } = useUser();
+  const { hasSubscriptionAccess, subscription, favorites, history } = useUser();
   const subscriptionAccess = hasSubscriptionAccess();
   const { t } = useTranslation();
-  const favorites = MOCK_MANGA.filter(m => MOCK_USER.favorites.includes(m.id));
-  
-  const history = MOCK_USER.history.map(h => {
-    const manga = MOCK_MANGA.find(m => m.id === h.mangaId);
-    const chapter = MOCK_CHAPTERS.find(c => c.id === h.chapterId);
-    return { ...h, manga, chapter };
-  }).filter(h => h.manga && h.chapter);
 
 
   const getSubscriptionStatusColor = (status?: string) => {
@@ -60,16 +53,16 @@ export default function Profile() {
               <div className="h-24 bg-gradient-to-r from-primary/20 to-purple-500/20"></div>
               <div className="px-6 pb-6 -mt-12 flex flex-col items-center">
                 <Avatar className="h-24 w-24 ring-4 ring-background shadow-xl mb-4">
-                  <AvatarImage src={MOCK_USER.avatar} />
-                  <AvatarFallback>{MOCK_USER.username.substring(0, 2)}</AvatarFallback>
+                  <AvatarImage src={user?.avatar ? user?.avatar : MOCK_USER.avatar} />
+                  <AvatarFallback>{user?.username.substring(0, 1)}</AvatarFallback>
                 </Avatar>
-                <h2 className="text-2xl font-bold font-display">{MOCK_USER.username}</h2>
-                <p className="text-muted-foreground text-sm mb-4">{MOCK_USER.email}</p>
+                <h2 className="text-2xl font-bold font-display">{user?.username}</h2>
+                <p className="text-muted-foreground text-sm mb-4">{user?.email}</p>
                 
                 <div className="w-full flex items-center justify-between p-3 bg-secondary/50 rounded-lg mb-6 border border-white/5">
                   <div className="flex items-center gap-2">
                     <Coins className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                    <span className="font-bold">{user?.coins || MOCK_USER.coins} {t('user.coins')}</span>
+                    <span className="font-bold">{user?.coins || 0} {t('user.coins')}</span>
                   </div>
                   <Button variant="outline" size="sm" className="h-8 text-xs">{t('navigation.topUp')}</Button>
                 </div>
@@ -177,7 +170,7 @@ export default function Profile() {
                     history.map((item, idx) => (
                       <div key={idx} className="flex items-center p-4 rounded-xl bg-card border border-white/5 hover:border-primary/50 transition-colors group">
                         <Link href={`/manga/${item.manga?.id}`} className="flex-shrink-0 w-16 h-24 rounded overflow-hidden mr-4">
-                            <img src={item.manga?.cover} alt={item.manga?.title} className="w-full h-full object-cover" />
+                            <img src={item.manga?.coverUrl} alt={item.manga?.title} className="w-full h-full object-cover" />
                         </Link>
                         <div className="flex-1 min-w-0">
                           <Link href={`/manga/${item.manga?.id}`} className="block font-bold truncate hover:text-primary transition-colors mb-1">

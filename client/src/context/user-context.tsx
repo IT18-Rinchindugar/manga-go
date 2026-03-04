@@ -35,7 +35,7 @@ interface UserContextType {
   // Favorite actions
   addFavorite: (mangaId: string) => Promise<void>;
   removeFavorite: (mangaId: string) => Promise<void>;
-  isFavorite: (mangaId: string) => boolean;
+  isFavorite: (mangaId?: string) => boolean;
   
   // History actions
   addToHistory: (mangaId: string, chapterId: string) => Promise<void>;
@@ -100,13 +100,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     try {
       setIsLoadingFavorites(true);
-      
-      // const records = await pb.collection('favorites').getFullList({
-      //   filter: `user = "${user.id}"`,
-      //   expand: 'manga',
-      //   sort: '-created',
-      // });
-      const records: PBFavorite[] = [];
+
+      const records = await pb.collection('favorites').getFullList({
+        filter: `user = "${user.id}"`,
+        expand: 'manga',
+        sort: '-created',
+      });
 
       const favoriteManga = records
         .map(record => record?.expand?.manga)
@@ -187,7 +186,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // Add favorite
   const addFavorite = async (mangaId: string) => {
     if (!user) throw new Error('User not authenticated');
-
+    setIsLoadingFavorites(true);
     try {
       await pb.collection('favorites').create({
         user: user.id,
@@ -198,13 +197,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Error adding favorite:', error);
       throw error;
+    } finally {
+      setIsLoadingFavorites(false);
     }
   };
 
   // Remove favorite
   const removeFavorite = async (mangaId: string) => {
     if (!user) throw new Error('User not authenticated');
-
+    setIsLoadingFavorites(true);
     try {
       const records = await pb.collection('favorites').getFullList({
         filter: `user = "${user.id}" && manga = "${mangaId}"`,
@@ -217,11 +218,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Error removing favorite:', error);
       throw error;
+    } finally {
+      setIsLoadingFavorites(false);
     }
   };
 
   // Check if manga is favorited
-  const isFavorite = (mangaId: string): boolean => {
+  const isFavorite = (mangaId?: string): boolean => {
+    if (!mangaId) return false;
     return favorites.some(manga => manga.id === mangaId);
   };
 
