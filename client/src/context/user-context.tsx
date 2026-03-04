@@ -36,6 +36,7 @@ interface UserContextType {
   addFavorite: (mangaId: string) => Promise<void>;
   removeFavorite: (mangaId: string) => Promise<void>;
   isFavorite: (mangaId?: string) => boolean;
+  toggleFavorite: (mangaId: string) => Promise<void>;
   
   // History actions
   addToHistory: (mangaId: string, chapterId: string) => Promise<void>;
@@ -186,14 +187,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // Add favorite
   const addFavorite = async (mangaId: string) => {
     if (!user) throw new Error('User not authenticated');
+  
     setIsLoadingFavorites(true);
+  
     try {
       await pb.collection('favorites').create({
         user: user.id,
         manga: mangaId,
       });
-      
-      await refreshFavorites();
+  
+      // if manga already exists in state skip
+      if (favorites.some(m => m.id === mangaId)) return;
+  
+      // fetch manga once
+      const manga: PBManga = await pb.collection('mangas').getOne(mangaId);
+  
+      setFavorites(prev => [...prev, manga]);
+  
     } catch (error) {
       console.error('Error adding favorite:', error);
       throw error;
@@ -205,21 +215,43 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // Remove favorite
   const removeFavorite = async (mangaId: string) => {
     if (!user) throw new Error('User not authenticated');
+  
     setIsLoadingFavorites(true);
+  
     try {
       const records = await pb.collection('favorites').getFullList({
         filter: `user = "${user.id}" && manga = "${mangaId}"`,
       });
-
+  
       if (records.length > 0) {
         await pb.collection('favorites').delete(records[0].id);
-        await refreshFavorites();
+  
+        setFavorites(prev => prev.filter(manga => manga.id !== mangaId));
       }
+  
     } catch (error) {
       console.error('Error removing favorite:', error);
       throw error;
     } finally {
       setIsLoadingFavorites(false);
+    }
+  };
+
+  const toggleFavorite = async (mangaId: string) => {
+    if (!user) throw new Error('User not authenticated');
+  
+    const isFav = favorites.some(m => m.id === mangaId);
+  
+    try {
+      if (isFav) {
+        removeFavorite(mangaId);
+      } else {
+        addFavorite(mangaId);
+      }
+  
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      throw error;
     }
   };
 
@@ -362,6 +394,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         isLoadingSubscription,
         addFavorite,
         removeFavorite,
+        toggleFavorite,
         isFavorite,
         addToHistory,
         clearHistory,

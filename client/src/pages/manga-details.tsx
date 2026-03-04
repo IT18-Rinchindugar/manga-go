@@ -22,7 +22,7 @@ export default function MangaDetails() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { openLoginModal } = useLoginModal();
-  const { hasSubscriptionAccess, isFavorite, addFavorite, removeFavorite, isLoadingFavorites } = useUser();
+  const { hasSubscriptionAccess, isFavorite, toggleFavorite, isLoadingFavorites } = useUser();
   const { openSubscriptionModal } = useSubscriptionModal();
   const [match, params] = useRoute("/manga/:id");
 
@@ -49,14 +49,6 @@ export default function MangaDetails() {
         </div>
       </Layout>
     );
-  }
-
-  const handleFavorite = () => {
-    if (params?.id && !isFavorite(params?.id)) {
-      addFavorite(params?.id);
-    } else {
-      params?.id && removeFavorite(params?.id);
-    }
   }
 
   // Error or not found
@@ -96,7 +88,7 @@ export default function MangaDetails() {
                       openLoginModal();
                       return;
                     }
-                    handleFavorite();
+                    params?.id && toggleFavorite(params?.id);
                   }}
                 >
                   <Heart className={`mr-2 h-4 w-4 ${isFavorite(params?.id) ? "fill-current" : ""}`} /> 
