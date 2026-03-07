@@ -25,7 +25,7 @@ export default function NewChapterCard({ chapter }: NewChapterCardProps) {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         {chapter?.isFree && (
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-1 right-2">
             <Badge className="bg-primary hover:bg-primary font-bold text-[9px] uppercase tracking-wider">
               {t('manga.free')}
             </Badge>
