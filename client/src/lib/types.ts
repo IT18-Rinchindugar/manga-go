@@ -1,3 +1,5 @@
+import { PBChapter, PBManga } from "./pocketbase-types";
+
 export type UserRole = 'USER' | 'ADMIN';
 export type MangaStatus = 'Ongoing' | 'Completed' | 'Hiatus';
 export type TransactionType = 'COIN_PURCHASE' | 'CHAPTER_UNLOCK';
@@ -117,4 +119,10 @@ export interface QPayVerificationResult {
   success: boolean;
   message: string;
   subscription?: Subscription;
+}
+
+export interface PBChapterExpanded extends PBChapter {
+  expand?: {
+    manga?: PBManga;
+  };
 }

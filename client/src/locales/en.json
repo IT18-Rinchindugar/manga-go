@@ -70,7 +70,8 @@
     "numberOfChapters": "chapters",
     "author": "Author",
     "artist": "Artist",
-    "releaseYear": "Release Year"
+    "releaseYear": "Release Year",
+    "newChapters": "New Chapters"
   },
   "genres": {
     "action": "Action",

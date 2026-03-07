@@ -75,7 +75,8 @@
     "numberOfChapters": "нийт",
     "author": "Зохиогч",
     "artist": "Зурагч",
-    "releaseYear": "Гарсан он"
+    "releaseYear": "Гарсан он",
+    "newChapters": "Шинэ бүлгүүд"
   },
   "genres": {
     "action": "Экшн",

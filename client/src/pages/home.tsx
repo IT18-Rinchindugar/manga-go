@@ -2,13 +2,15 @@ import { HERO_IMAGE } from "@/lib/mock-data";
 import Layout from "@/components/layout";
 import MangaCard from "@/components/manga-card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Flame, Sparkles, Loader2 } from "lucide-react";
+import { ArrowRight, Flame, Sparkles, Loader2, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import type { PBManga } from "@/lib/pocketbase-types";
 import { Link } from "wouter";
+import { mangaApi } from "@/services/manga-api";
+import NewChapterCard from "@/components/new-chapter-card";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -29,6 +31,12 @@ export default function Home() {
   const { data: newManga = [], isLoading: newLoading } = useQuery({
     queryKey: ['new-manga'],
     queryFn: () => api.getNewManga(),
+  });
+
+  // Fetch new chapters
+  const { data: newChapters = [], isLoading: newChaptersLoading } = useQuery({
+    queryKey: ['new-chapters'],
+    queryFn: () => mangaApi.getNewChapters(),
   });
 
   return (
@@ -117,6 +125,41 @@ export default function Home() {
             </motion.div>
           )}
         </div>
+      </section>
+
+      {/* New Chapters Section */}
+      <section className="py-8 md:py-12 container mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-2">
+            <Clock className="h-6 w-6 text-primary fill-primary" />
+            <h2 className="text-lg md:text-2xl font-bold font-display">
+              {t('manga.newChapters')}
+            </h2>
+          </div>
+          <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
+            {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Button>
+        </div>
+        
+        {newChaptersLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-muted rounded-lg aspect-[2/3] mb-2" />
+              </div>
+            ))}
+          </div>
+        ) : newChapters.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6">
+            {newChapters.map((chapter) => (
+              <NewChapterCard key={chapter.id} chapter={chapter} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            No new chapters available at the moment.
+          </div>
+        )}
       </section>
 
       {/* Popular Section */}
