@@ -11,9 +11,42 @@ import type { PBManga } from "@/lib/pocketbase-types";
 import { Link } from "wouter";
 import { mangaApi } from "@/services/manga-api";
 import NewChapterCard from "@/components/new-chapter-card";
+import { useState, useEffect } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 export default function Home() {
   const { t } = useTranslation();
+
+  const [chaptersApi, setChaptersApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [slideCount, setSlideCount] = useState(0);
+  const [prevEnabled, setPrevEnabled] = useState(false);
+  const [nextEnabled, setNextEnabled] = useState(false);
+
+  useEffect(() => {
+    if (!chaptersApi) return;
+
+    const onSelect = () => {
+      setCurrentSlide(chaptersApi.selectedScrollSnap());
+      setPrevEnabled(chaptersApi.canScrollPrev());
+      setNextEnabled(chaptersApi.canScrollNext());
+    };
+
+    setSlideCount(chaptersApi.scrollSnapList().length);
+    onSelect();
+    chaptersApi.on("select", onSelect);
+    chaptersApi.on("reInit", onSelect);
+
+    return () => {
+      chaptersApi.off("select", onSelect);
+      chaptersApi.off("reInit", onSelect);
+    };
+  }, [chaptersApi]);
 
   // Fetch featured manga
   const { data: featuredManga, isLoading: featuredLoading } = useQuery({
@@ -136,25 +169,81 @@ export default function Home() {
               {t('manga.newChapters')}
             </h2>
           </div>
-          <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
-            {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => chaptersApi?.scrollPrev()}
+              disabled={!prevEnabled}
+              className="h-8 w-8 rounded-full border border-white/10 bg-card flex items-center justify-center text-muted-foreground hover:text-white hover:border-primary/50 hover:bg-primary/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ArrowRight className="h-4 w-4 rotate-180" />
+            </button>
+            <button
+              onClick={() => chaptersApi?.scrollNext()}
+              disabled={!nextEnabled}
+              className="h-8 w-8 rounded-full border border-white/10 bg-card flex items-center justify-center text-muted-foreground hover:text-white hover:border-primary/50 hover:bg-primary/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </button>
+            <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
+              {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
         </div>
         
         {newChaptersLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-muted rounded-lg aspect-[2/3] mb-2" />
+          <div className="flex gap-3 overflow-hidden">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="animate-pulse flex-shrink-0 w-[calc(50%-6px)] sm:w-[calc(33.333%-8px)] md:w-[calc(25%-9px)]">
+                <div className="flex items-center gap-3 p-2 rounded-xl bg-card border border-white/10">
+                  <div className="w-20 h-24 flex-shrink-0 rounded-lg bg-muted" />
+                  <div className="flex flex-col gap-2 flex-1">
+                    <div className="h-3.5 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-1/2" />
+                    <div className="h-3 bg-muted rounded w-1/3" />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         ) : newChapters.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6">
-            {newChapters.map((chapter) => (
-              <NewChapterCard key={chapter.id} chapter={chapter} />
-            ))}
-          </div>
+          <>
+            <Carousel
+              setApi={setChaptersApi}
+              opts={{ align: "start", loop: true }}
+            >
+              <CarouselContent className="-ml-3">
+                {Array.from({ length: Math.ceil(newChapters.length / 2) }).map((_, colIdx) => {
+                  const top = newChapters[colIdx * 2];
+                  const bottom = newChapters[colIdx * 2 + 1];
+                  return (
+                    <CarouselItem key={colIdx} className="pl-3 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                      <div className="flex flex-col gap-3">
+                        <NewChapterCard chapter={top} />
+                        {bottom && <NewChapterCard chapter={bottom} />}
+                      </div>
+                    </CarouselItem>
+                  );
+                })}
+              </CarouselContent>
+            </Carousel>
+
+            {/* Dot indicators */}
+            {slideCount > 1 && (
+              <div className="flex justify-center gap-1.5 mt-4">
+                {Array.from({ length: slideCount }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => chaptersApi?.scrollTo(i)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      i === currentSlide
+                        ? "w-6 bg-primary"
+                        : "w-1.5 bg-white/30 hover:bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12 text-muted-foreground">
             No new chapters available at the moment.
