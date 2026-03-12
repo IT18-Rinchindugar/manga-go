@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 export default function Reader() {
   const { t } = useTranslation();
@@ -183,23 +185,32 @@ export default function Reader() {
            {readingMode === 'vertical' ? (
              // Vertical Mode - show all pages
              chapter.pageUrls.map((pageUrl, i) => (
-              <img
-                key={i}
-                src={pageUrl}
-                alt={`Page ${i + 1}`}
-                className="w-full h-auto block"
-                style={{ width: `${zoom}%` }}
-                loading={i < 5 ? 'eager' : 'lazy'}
-                fetchPriority={i === 0 ? 'high' : i < 5 ? 'auto' : 'low'}
-              />
+               <LazyLoadImage
+                 key={i}
+                 src={pageUrl}
+                 alt={`Page ${i + 1}`}
+                 className="w-full h-auto block"
+                 style={{ width: `${zoom}%` }}
+                 effect="blur"
+                 threshold={300}
+                 visibleByDefault={i < 5}
+                 placeholder={
+                   <div className="w-full bg-zinc-800 animate-pulse" style={{ aspectRatio: '2/3', width: `${zoom}%` }} />
+                 }
+               />
              ))
            ) : (
              // Single Page Mode
-             <img 
-              src={chapter.pageUrls[currentPage - 1]} 
-              alt={`Page ${currentPage}`}
-              className="max-h-[80vh] w-auto shadow-2xl object-contain"
-              style={{ transform: `scale(${zoom/100})` }}
+             <LazyLoadImage
+               src={chapter.pageUrls[currentPage - 1]}
+               alt={`Page ${currentPage}`}
+               className="max-h-[80vh] w-auto shadow-2xl object-contain"
+               style={{ transform: `scale(${zoom/100})` }}
+               effect="blur"
+               visibleByDefault={true}
+               placeholder={
+                 <div className="bg-zinc-800 animate-pulse" style={{ width: '100%', aspectRatio: '2/3' }} />
+               }
              />
            )}
         </div>
