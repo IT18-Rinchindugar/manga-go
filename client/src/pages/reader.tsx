@@ -183,14 +183,15 @@ export default function Reader() {
            {readingMode === 'vertical' ? (
              // Vertical Mode - show all pages
              chapter.pageUrls.map((pageUrl, i) => (
-               <img 
+              <img
                 key={i}
-                src={pageUrl} 
-                alt={`Page ${i+1}`}
+                src={pageUrl}
+                alt={`Page ${i + 1}`}
                 className="w-full h-auto block"
                 style={{ width: `${zoom}%` }}
-                loading="lazy"
-               />
+                loading={i < 5 ? 'eager' : 'lazy'}
+                fetchPriority={i === 0 ? 'high' : i < 5 ? 'auto' : 'low'}
+              />
              ))
            ) : (
              // Single Page Mode
