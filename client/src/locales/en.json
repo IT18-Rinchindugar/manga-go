@@ -1,5 +1,6 @@
 {
   "common": {
+    "back": "Back",
     "home": "Home",
     "browse": "Browse",
     "latest": "Latest",
@@ -22,10 +23,13 @@
     "loggingIn": "Logging in...",
     "creatingAccount": "Creating account...",
     "processing": "Processing...",
-    "showing": "Showing",
+    "showing": "Илэрц",
     "results": "results"
   },
   "navigation": {
+    "selectAGenre": "Select a Genre",
+    "clickOnAnyGenreAboveToSeeAvailableManga": "Click on any genre above to see available manga",
+    "exploreMangaByYourFavoriteCategories": "Explore manga by your favorite categories",
     "filtersAndSort": "Filters & Sort",
     "sortBy": "Sort By",
     "clearAllFilters": "Clear All Filters",
@@ -43,6 +47,11 @@
     "subscription": "Subscription"
   },
   "manga": {
+    "sortBy": "Sort By",
+    "latestUpdates": "Latest Updates",
+    "mostPopular": "Most Popular",
+    "aToZ": "A-Z",
+    "zToA": "Z-A",
     "popularThisWeek": "Popular This Week",
     "newReleases": "New Releases",
     "featuredSeries": "Featured Series",
@@ -71,22 +80,34 @@
     "author": "Author",
     "artist": "Artist",
     "releaseYear": "Release Year",
-    "newChapters": "New Chapters"
+    "newChapters": "New Chapters",
+    "searchByTitleOrAuthor": "Search by title or author...",
+    "noMangaFoundMatchingYourCriteria": "No manga found matching your criteria.",
+    "retry": "Retry",
+    "titles": "titles",
+    "exploreMangaByYourFavoriteCategories": "Explore manga by your favorite categories"
   },
   "genres": {
+    "genres": "Genres",
     "action": "Action",
-    "romance": "Romance",
+    "adventure": "Adventure",
     "fantasy": "Fantasy",
-    "sciFi": "Sci-Fi",
-    "horror": "Horror",
+    "supernatural": "Supernatural",
+    "romance": "Romance",
     "comedy": "Comedy",
     "drama": "Drama",
-    "sliceOfLife": "Slice of Life",
+    "horror": "Horror",
     "mystery": "Mystery",
-    "adventure": "Adventure",
+    "sciFi": "Sci-Fi",
+    "sliceOfLife": "Slice of Life",
+    "psychological": "Psychological",
+    "martialArts": "Martial Arts",
     "isekai": "Isekai",
+    "school": "School",
+    "historical": "Historical",
+    "reincarnation": "Reincarnation",
+    "cultivation": "Cultivation",
     "sports": "Sports",
-    "schoolLife": "School Life",
     "thriller": "Thriller"
   },
   "time": {
