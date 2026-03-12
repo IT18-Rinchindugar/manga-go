@@ -191,8 +191,6 @@ export default function Reader() {
                  alt={`Page ${i + 1}`}
                  className="w-full h-auto block"
                  style={{ width: `${zoom}%` }}
-                 effect="blur"
-                 threshold={300}
                  visibleByDefault={i < 5}
                  placeholder={
                    <div className="w-full bg-zinc-800 animate-pulse" style={{ aspectRatio: '2/3', width: `${zoom}%` }} />
@@ -206,7 +204,6 @@ export default function Reader() {
                alt={`Page ${currentPage}`}
                className="max-h-[80vh] w-auto shadow-2xl object-contain"
                style={{ transform: `scale(${zoom/100})` }}
-               effect="blur"
                visibleByDefault={true}
                placeholder={
                  <div className="bg-zinc-800 animate-pulse" style={{ width: '100%', aspectRatio: '2/3' }} />
