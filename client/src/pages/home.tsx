@@ -260,9 +260,11 @@ export default function Home() {
               {t('manga.popularThisWeek')}
             </h2>
           </div>
-          <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
-            {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
+          <Link href="/browse?filter=popular">
+            <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
+              {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
         </div>
         
         {popularLoading ? (
@@ -298,9 +300,11 @@ export default function Home() {
                 {t('manga.newReleases')}
               </h2>
             </div>
-            <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
-              {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
+            <Link href="/browse?filter=new">
+              <Button variant="ghost" className="text-muted-foreground hover:text-primary group">
+                {t('common.viewAll')} <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </div>
           
           {newLoading ? (

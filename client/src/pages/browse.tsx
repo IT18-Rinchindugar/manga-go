@@ -18,15 +18,18 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { mangaApi } from "@/services/manga-api";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "wouter";
 
 const ALL_GENRES = [
   "Action", "Adventure", "Fantasy", "Supernatural", "Romance",
   "Comedy", "Drama", "Horror", "Mystery", "Sci-Fi",
-  "Slice of Life", "Psychological", "Martial Arts", "Isekai", "School",
+  "Psychological", "Martial Arts", "Isekai", "School",
   "Historical", "Reincarnation", "Cultivation", "Sports", "Thriller",
 ];
 
 export default function Browse() {
+  const [searchParams] = useSearchParams();
+  const filter = searchParams.get("filter");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -73,6 +76,21 @@ export default function Browse() {
     setStatusFilter("all");
     setMinRating([0]);
   };
+
+  useEffect(() => {
+    if (filter) {
+      switch (filter) {
+        case "new":
+          setSortOrder("latest");
+          break;
+        case "popular":
+          setSortOrder("popular");
+          break;
+      }
+    } else {
+      setSortOrder("latest");
+    }
+  }, [filter]);
 
   const hasActiveFilters =
     selectedGenres.length > 0 || searchTerm || statusFilter !== "all" || minRating[0] > 0;
@@ -159,7 +177,7 @@ export default function Browse() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                <div className="py-4">
+                <div className="py-4 text-white">
                   <FilterSidebar />
                 </div>
               </SheetContent>
