@@ -16,7 +16,7 @@ export interface BrowseFilters {
 const getChaptersForManga = async (mangaId: string): Promise<PBChapter[]> => {
   const chapters = await pb.collection('chapters').getFullList<PBChapter>({
     filter: `manga = "${mangaId}"`,
-    sort: '-title', // descending order
+    sort: '-created', // descending order
   });
   return chapters;  
 };
