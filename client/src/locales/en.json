@@ -24,7 +24,9 @@
     "creatingAccount": "Creating account...",
     "processing": "Processing...",
     "showing": "Илэрц",
-    "results": "results"
+    "results": "results",
+    "showLess": "Show less",
+    "showMore": "Show more"
   },
   "navigation": {
     "selectAGenre": "Select a Genre",

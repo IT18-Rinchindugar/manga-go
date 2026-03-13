@@ -25,6 +25,7 @@ export default function MangaDetails() {
   const { hasSubscriptionAccess, isFavorite, toggleFavorite, isLoadingFavorites } = useUser();
   const { openSubscriptionModal } = useSubscriptionModal();
   const [match, params] = useRoute("/manga/:id");
+  const [synopsisExpanded, setSynopsisExpanded] = useState(false);
 
   // Fetch manga details from PocketBase
   const { data: manga, isLoading: mangaLoading, error: mangaError } = useQuery({
@@ -158,9 +159,15 @@ export default function MangaDetails() {
 
             <div className="mb-8 p-6 rounded-xl bg-secondary/20 border border-white/5">
               <h3 className="text-lg font-bold mb-2 text-foreground/80">{t('manga.synopsis')}</h3>
-              <p className="text-muted-foreground leading-relaxed text-lg">
+              <p className={`text-muted-foreground leading-relaxed text-lg overflow-hidden transition-all duration-300 ${synopsisExpanded ? '' : 'line-clamp-2'}`}>
                 {manga.synopsis}
               </p>
+              <button
+                onClick={() => setSynopsisExpanded(prev => !prev)}
+                className="mt-2 text-sm text-primary hover:text-primary/80 font-semibold transition-colors"
+              >
+                {synopsisExpanded ? t('common.showLess') : t('common.showMore')}
+              </button>
             </div>
 
             {/* Chapters List */}
@@ -172,10 +179,10 @@ export default function MangaDetails() {
                 </span>
               </div>
               <ScrollArea className="h-[500px]">
-                <div className="divide-y divide-white/5">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 p-3">
                   {chapters.map((chapter) => (
-                    <Link 
-                      key={chapter.id} 
+                    <Link
+                      key={chapter.id}
                       href={!chapter.isFree ? "#" : `/read/${manga.id}/${chapter.id}`}
                       onClick={(e) => {
                         if (!chapter.isFree && !user) {
@@ -193,27 +200,21 @@ export default function MangaDetails() {
                         navigate(`/read/${manga.id}/${chapter.id}`);
                         return;
                       }}
-                      className={`flex items-center justify-between p-4 hover:bg-white/5 transition-colors group ${!chapter.isFree ? 'opacity-70' : ''}`}
+                      className={`relative flex flex-col items-center justify-center gap-1 p-2 rounded-lg border border-white/5 bg-muted/20 hover:bg-primary/10 hover:border-primary/40 transition-all group text-center ${!chapter.isFree ? 'opacity-60' : ''}`}
                     >
-                        <div className="flex flex-col gap-1">
-                          <span className="font-semibold group-hover:text-primary transition-colors text-base">
-                            {t('manga.chapter')} {chapter.number} {chapter?.title ? `: ${chapter.title}` : ''}
-                          </span>
-                          <span className="text-xs text-muted-foreground">{chapter.pageUrls?.length || 0} {t('manga.pages')}</span>
-                        </div>
-                        
-                        {!chapter.isFree ? (
-                          <div className="flex items-center gap-3">
-                            <span className="text-xs font-bold text-primary flex items-center gap-1 bg-primary/10 px-2 py-1 rounded">
-                              <Coins className="h-3 w-3" /> {chapter.price}
-                            </span>
-                            <Lock className="h-4 w-4 text-muted-foreground" />
-                          </div>
-                        ) : (
-                          <Badge variant="outline" className="border-primary/50 text-primary bg-primary/5">
-                            {t('manga.free')}
-                          </Badge>
-                        )}
+                      <span className="text-sm font-bold group-hover:text-primary transition-colors leading-tight">
+                         {t('manga.chapter')} {chapter?.title ? `: ${chapter.title}` : ''}
+                      </span>
+                      {!chapter.isFree ? (
+                        <>
+                          <Lock className="h-3 w-3 text-muted-foreground" /> 
+                          {/* <span className="text-[12px] text-primary font-semibold uppercase tracking-wide">{chapter.price} {t('manga.coins')}</span> */}
+                        </>
+                      ) : (
+                        <span className="text-[10px] text-primary font-semibold uppercase tracking-wide">
+                          {t('manga.free')}
+                        </span>
+                      )}
                     </Link>
                   ))}
                 </div>

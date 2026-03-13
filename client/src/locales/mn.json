@@ -24,7 +24,9 @@
     "creatingAccount": "Бүртгэл үүсгэж байна...",
     "processing": "Боловсруулж байна...",
     "showing": "Илэрц",
-    "results": "үр дүн"
+    "results": "үр дүн",
+    "showLess": "Нуух",
+    "showMore": "Дэлгэрэнгүй"
   },
   "profile": {
     "mySubscription": "Миний багц",
@@ -89,7 +91,8 @@
     "noMangaFoundMatchingYourCriteria": "Таны шалгуурт тохирох манга олдсонгүй.",
     "retry": "Дахин оролдох",
     "titles": "гарчиг",
-    "exploreMangaByYourFavoriteCategories": "Өөрийн дуртай төрлөөр манга судлаарай"
+    "exploreMangaByYourFavoriteCategories": "Өөрийн дуртай төрлөөр манга судлаарай",
+    "coins": "Зоос"
   },
   "genres": {
     "genres": "Төрөл",
